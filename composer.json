@@ -8,15 +8,13 @@
             "email": "lgandelin@web-access.fr"
         }
     ],
-    "require": {
-    },
     "require-dev": {
         "phpunit/phpunit": "4.1.*@dev",
         "mockery/mockery": "0.9.*"
     },
     "autoload": {
         "psr-4": {
-            "Webaccess\\ProjectSquarePayment\\": "src/Webaccess/ProjectSquarePayment",
+            "Webaccess\\ProjectSquarePayment\\": "src/Webaccess/ProjectSquarePayment"
         }
     },
     "minimum-stability": "dev"
