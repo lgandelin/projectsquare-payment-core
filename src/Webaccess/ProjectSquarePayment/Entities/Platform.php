@@ -8,6 +8,7 @@ class Platform
     private $usersCount;
     private $fixedMonthlyCost;
     private $userMonthlyCost;
+    private $accountBalance;
 
     public function getId()
     {
@@ -47,5 +48,15 @@ class Platform
     public function setUserMonthlyCost($userMonthlyCost)
     {
         $this->userMonthlyCost = $userMonthlyCost;
+    }
+
+    public function getAccountBalance()
+    {
+        return $this->accountBalance;
+    }
+
+    public function setAccountBalance($accountBalance)
+    {
+        $this->accountBalance = $accountBalance;
     }
 }

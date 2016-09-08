@@ -11,9 +11,9 @@ class InMemoryPlatformRepository implements PlatformRepository
 
     public function persist(Platform $platform)
     {
-        $platformID = $this->getNextID();
+        $platformID = $platform->getID() ? $platform->getID() : $this->getNextID();
         $platform->setId($platformID);
-        $this->objects[$platformID]= $platform;
+        $this->objects[$platformID] = $platform;
     }
 
     public function getByID($platformID)
