@@ -1,6 +1,6 @@
 <?php
 
-namespace Webaccess\ProjectSquarePayment\Interactors;
+namespace Webaccess\ProjectSquarePayment\Interactors\Platforms;
 
 use Webaccess\ProjectSquarePayment\Repositories\PlatformRepository;
 

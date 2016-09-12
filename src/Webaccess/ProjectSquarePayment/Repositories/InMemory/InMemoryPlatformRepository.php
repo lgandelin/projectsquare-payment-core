@@ -16,7 +16,7 @@ class InMemoryPlatformRepository implements PlatformRepository
         $this->objects[$platformID] = $platform;
     }
 
-    public function getByID($platformID)
+    public function getByID($platformID): Platform
     {
         return $this->objects[$platformID];
     }

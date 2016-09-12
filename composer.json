@@ -17,5 +17,10 @@
             "Webaccess\\ProjectSquarePayment\\": "src/Webaccess/ProjectSquarePayment"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Webaccess\\ProjectSquarePaymentTests\\": "tests/Webaccess/ProjectSquarePaymentTests"
+        }
+    },
     "minimum-stability": "dev"
 }

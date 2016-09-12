@@ -1,15 +1,14 @@
 <?php
 
 use Webaccess\ProjectSquarePayment\Entities\Platform;
-use Webaccess\ProjectSquarePayment\Interactors\DecreasePlatformAccountBalanceInteractor;
-use Webaccess\ProjectSquarePayment\Repositories\InMemory\InMemoryPlatformRepository;
+use Webaccess\ProjectSquarePayment\Interactors\Platforms\DecreasePlatformAccountBalanceInteractor;
+use Webaccess\ProjectSquarePaymentTests\ProjectsquareTestCase;
 
-class DecreasePlatformAccountBalanceInteractorTest extends \PHPUnit_Framework_TestCase
+class DecreasePlatformAccountBalanceInteractorTest extends ProjectsquareTestCase
 {
     public function __construct()
     {
         parent::__construct();
-        $this->platformRepository = new InMemoryPlatformRepository();
         $this->interactor = new DecreasePlatformAccountBalanceInteractor($this->platformRepository);
     }
 
@@ -19,7 +18,7 @@ class DecreasePlatformAccountBalanceInteractorTest extends \PHPUnit_Framework_Te
         $this->interactor->decreaseDailyCost($platform->getID());
         $this->platformRepository->getByID($platform->getID());
 
-        $this->assertEquals(58.34, $platform->getAccountBalance(), '', 0.01);
+        $this->assertAmountEquals(58.34, $platform->getAccountBalance());
     }
 
     public function testDecreasePlatformAccountBalanceMonthly()
@@ -28,7 +27,7 @@ class DecreasePlatformAccountBalanceInteractorTest extends \PHPUnit_Framework_Te
         $this->interactor->decreaseMonthlyCost($platform->getID());
         $this->platformRepository->getByID($platform->getID());
 
-        $this->assertEquals(10.04, $platform->getAccountBalance(), '', 0.01);
+        $this->assertAmountEquals(10.04, $platform->getAccountBalance());
     }
 
     private function createSamplePlatform()

@@ -1,15 +1,14 @@
 <?php
 
 use Webaccess\ProjectSquarePayment\Entities\Platform;
-use Webaccess\ProjectSquarePayment\Interactors\GetPlatformUsageAmountInteractor;
-use Webaccess\ProjectSquarePayment\Repositories\InMemory\InMemoryPlatformRepository;
+use Webaccess\ProjectSquarePayment\Interactors\Platforms\GetPlatformUsageAmountInteractor;
+use Webaccess\ProjectSquarePaymentTests\ProjectsquareTestCase;
 
-class GetPlatformUsageAmountInteractorTest extends \PHPUnit_Framework_TestCase
+class GetPlatformUsageAmountInteractorTest extends ProjectsquareTestCase
 {
     public function __construct()
     {
         parent::__construct();
-        $this->platformRepository = new InMemoryPlatformRepository();
         $this->interactor = new GetPlatformUsageAmountInteractor($this->platformRepository);
     }
 
@@ -17,14 +16,14 @@ class GetPlatformUsageAmountInteractorTest extends \PHPUnit_Framework_TestCase
     {
         $platform = $this->createSamplePlatform();
 
-        $this->assertEquals(49.96, $this->interactor->getMonthlyCost($platform->getID()), '', 0.01);
+        $this->assertAmountEquals(49.96, $this->interactor->getMonthlyCost($platform->getID()));
     }
 
     public function testGetDailyCost()
     {
         $platform = $this->createSamplePlatform();
 
-        $this->assertEquals(1.66, $this->interactor->getDailyCost($platform->getID()), '', 0.01);
+        $this->assertAmountEquals(1.66, $this->interactor->getDailyCost($platform->getID()));
     }
 
     private function createSamplePlatform()
