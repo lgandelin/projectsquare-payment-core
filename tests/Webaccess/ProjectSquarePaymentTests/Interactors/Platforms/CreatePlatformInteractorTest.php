@@ -38,7 +38,36 @@ class CreatePlatformInteractorTest extends ProjectsquareTestCase
 
         $this->assertInstanceOf(Webaccess\ProjectSquarePayment\Responses\Platforms\CreatePlatformResponse::class, $response);
         $this->assertEquals(0, sizeof($this->platformRepository->objects));
-        $this->assertEquals(CreatePlatformResponse::PLATFORM_NAME_REQUIRED_ERROR_CODE, $response->errorCode);
+        $this->assertEquals(CreatePlatformResponse::PLATFORM_NAME_REQUIRED, $response->errorCode);
+        $this->assertFalse($response->success);
+    }
+
+    public function testCreatePlatformWithSlugUnavailable()
+    {
+        $this->createSamplePlatform();
+
+        $response = $this->interactor->execute(new CreatePlatformRequest([
+            'name' => 'Webaccess',
+            'slug' => 'webaccess',
+            'usersCount' => 3
+        ]));
+
+        $this->assertInstanceOf(Webaccess\ProjectSquarePayment\Responses\Platforms\CreatePlatformResponse::class, $response);
+        $this->assertEquals(1, sizeof($this->platformRepository->objects));
+        $this->assertEquals(CreatePlatformResponse::PLATFORM_SLUG_UNAVAILABLE, $response->errorCode);
+        $this->assertFalse($response->success);
+    }
+
+    public function testCreatePlatformWithoutUsers()
+    {
+        $response = $this->interactor->execute(new CreatePlatformRequest([
+            'name' => 'Webaccess',
+            'slug' => 'webaccess',
+        ]));
+
+        $this->assertInstanceOf(Webaccess\ProjectSquarePayment\Responses\Platforms\CreatePlatformResponse::class, $response);
+        $this->assertEquals(0, sizeof($this->platformRepository->objects));
+        $this->assertEquals(CreatePlatformResponse::PLATFORM_USERS_COUNT_REQUIRED, $response->errorCode);
         $this->assertFalse($response->success);
     }
 }

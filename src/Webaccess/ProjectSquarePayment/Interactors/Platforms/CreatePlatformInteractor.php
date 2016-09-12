@@ -25,26 +25,29 @@ class CreatePlatformInteractor
      */
     public function execute(CreatePlatformRequest $request): CreatePlatformResponse
     {
+        $errorCode = null;
         $platform = $this->createObjectFromRequest($request);
-        $response = new CreatePlatformResponse();
 
         if (!$platform->getName())
-            return $this->createResponseWithErrorCode($response, CreatePlatformResponse::PLATFORM_NAME_REQUIRED_ERROR_CODE);
+            $errorCode = CreatePlatformResponse::PLATFORM_NAME_REQUIRED;
 
-        if (!$this->platformRepository->persist($platform))
-            return $this->createResponseWithErrorCode($response, CreatePlatformResponse::REPOSITORY_INSERTION_FAILED_ERROR_CODE);
+        elseif (!$platform->getUsersCount())
+            $errorCode = CreatePlatformResponse::PLATFORM_USERS_COUNT_REQUIRED;
 
-        $response->success = true;
-        $response->platform = $platform;
+        elseif (!$this->isSlugAvailable($platform))
+            $errorCode = CreatePlatformResponse::PLATFORM_SLUG_UNAVAILABLE;
 
-        return $response;
+        elseif (!$this->platformRepository->persist($platform))
+            $errorCode = CreatePlatformResponse::REPOSITORY_INSERTION_FAILED;
+
+        return ($errorCode === null) ? $this->createSuccessResponse($platform) : $this->createErrorResponse($errorCode);
     }
 
     /**
      * @param CreatePlatformRequest $request
      * @return Platform
      */
-    private function createObjectFromRequest(CreatePlatformRequest $request)
+    private function createObjectFromRequest(CreatePlatformRequest $request): Platform
     {
         $platform = new Platform();
         $platform->setName($request->name);
@@ -55,14 +58,36 @@ class CreatePlatformInteractor
     }
 
     /**
-     * @param CreatePlatformResponse $response
+     * @param Platform $platform
+     * @return bool
+     */
+    private function isSlugAvailable(Platform $platform)
+    {
+        return !$this->platformRepository->getBySlug($platform->getSlug());
+    }
+
+    /**
      * @param $errorCode
      * @return CreatePlatformResponse
      */
-    private function createResponseWithErrorCode(CreatePlatformResponse $response, $errorCode)
+    private function createErrorResponse($errorCode): CreatePlatformResponse
     {
+        $response = new CreatePlatformResponse();
         $response->success = false;
         $response->errorCode = $errorCode;
+
+        return $response;
+    }
+
+    /**
+     * @param $platform
+     * @return CreatePlatformResponse
+     */
+    private function createSuccessResponse(Platform $platform): CreatePlatformResponse
+    {
+        $response = new CreatePlatformResponse();
+        $response->success = true;
+        $response->platform = $platform;
 
         return $response;
     }

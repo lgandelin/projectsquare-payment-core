@@ -7,5 +7,7 @@ interface PlatformRepository
 {
     public function getByID($platformID): Platform;
 
+    public function getBySlug($platformSlug);
+
     public function persist(Platform $platform): bool;
 }
