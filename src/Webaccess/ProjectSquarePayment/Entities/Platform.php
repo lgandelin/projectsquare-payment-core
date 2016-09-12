@@ -5,6 +5,8 @@ namespace Webaccess\ProjectSquarePayment\Entities;
 class Platform
 {
     private $id;
+    private $name;
+    private $slug;
     private $usersCount;
     private $fixedMonthlyCost;
     private $userMonthlyCost;
@@ -18,6 +20,26 @@ class Platform
     public function setId($id)
     {
         $this->id = $id;
+    }
+
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    public function getSlug()
+    {
+        return $this->slug;
+    }
+
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
     }
 
     public function getUsersCount()

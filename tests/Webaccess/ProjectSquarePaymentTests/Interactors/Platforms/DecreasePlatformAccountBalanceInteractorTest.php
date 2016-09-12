@@ -1,6 +1,5 @@
 <?php
 
-use Webaccess\ProjectSquarePayment\Entities\Platform;
 use Webaccess\ProjectSquarePayment\Interactors\Platforms\DecreasePlatformAccountBalanceInteractor;
 use Webaccess\ProjectSquarePaymentTests\ProjectsquareTestCase;
 
@@ -28,17 +27,5 @@ class DecreasePlatformAccountBalanceInteractorTest extends ProjectsquareTestCase
         $this->platformRepository->getByID($platform->getID());
 
         $this->assertAmountEquals(10.04, $platform->getAccountBalance());
-    }
-
-    private function createSamplePlatform()
-    {
-        $platform = new Platform();
-        $platform->setFixedMonthlyCost(19.99);
-        $platform->setUserMonthlyCost(9.99);
-        $platform->setUsersCount(3);
-        $platform->setAccountBalance(60);
-        $this->platformRepository->persist($platform);
-
-        return $platform;
     }
 }

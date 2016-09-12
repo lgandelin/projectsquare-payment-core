@@ -8,11 +8,17 @@ class DecreasePlatformAccountBalanceInteractor
 {
     private $platformRepository;
 
+    /**
+     * @param PlatformRepository $platformRepository
+     */
     public function __construct(PlatformRepository $platformRepository)
     {
         $this->platformRepository = $platformRepository;
     }
 
+    /**
+     * @param $platformID
+     */
     public function decreaseDailyCost($platformID)
     {
         $platform = $this->platformRepository->getByID($platformID);
@@ -20,6 +26,9 @@ class DecreasePlatformAccountBalanceInteractor
         $platform->setAccountBalance($platform->getAccountBalance() - $dailyCost);
     }
 
+    /**
+     * @param $platformID
+     */
     public function decreaseMonthlyCost($platformID)
     {
         $platform = $this->platformRepository->getByID($platformID);

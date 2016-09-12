@@ -8,19 +8,30 @@ class GetPlatformUsageAmountInteractor
 {
     private $platformRepository;
 
+    /**
+     * @param PlatformRepository $platformRepository
+     */
     public function __construct(PlatformRepository $platformRepository)
     {
         $this->platformRepository = $platformRepository;
     }
 
-    public function getMonthlyCost($platformID)
+    /**
+     * @param $platformID
+     * @return float
+     */
+    public function getMonthlyCost($platformID): float
     {
         $platform = $this->platformRepository->getByID($platformID);
 
         return $platform->getFixedMonthlyCost() + $platform->getUsersCount() * $platform->getUserMonthlyCost();
     }
 
-    public function getDailyCost($platformID)
+    /**
+     * @param $platformID
+     * @return float
+     */
+    public function getDailyCost($platformID): float
     {
         return $this->getMonthlyCost($platformID) / date('t');
     }

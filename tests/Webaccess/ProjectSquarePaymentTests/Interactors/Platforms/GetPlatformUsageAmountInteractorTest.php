@@ -1,6 +1,5 @@
 <?php
 
-use Webaccess\ProjectSquarePayment\Entities\Platform;
 use Webaccess\ProjectSquarePayment\Interactors\Platforms\GetPlatformUsageAmountInteractor;
 use Webaccess\ProjectSquarePaymentTests\ProjectsquareTestCase;
 
@@ -24,16 +23,5 @@ class GetPlatformUsageAmountInteractorTest extends ProjectsquareTestCase
         $platform = $this->createSamplePlatform();
 
         $this->assertAmountEquals(1.66, $this->interactor->getDailyCost($platform->getID()));
-    }
-
-    private function createSamplePlatform()
-    {
-        $platform = new Platform();
-        $platform->setFixedMonthlyCost(19.99);
-        $platform->setUserMonthlyCost(9.99);
-        $platform->setUsersCount(3);
-        $this->platformRepository->persist($platform);
-
-        return $platform;
     }
 }
