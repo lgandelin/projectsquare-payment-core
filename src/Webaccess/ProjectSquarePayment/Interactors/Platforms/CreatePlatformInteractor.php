@@ -26,10 +26,15 @@ class CreatePlatformInteractor
     public function execute(CreatePlatformRequest $request): CreatePlatformResponse
     {
         $platform = $this->createObjectFromRequest($request);
-
-        $this->platformRepository->persist($platform);
-
         $response = new CreatePlatformResponse();
+
+        if (!$platform->getName())
+            return $this->createResponseWithErrorCode($response, CreatePlatformResponse::PLATFORM_NAME_REQUIRED_ERROR_CODE);
+
+        if (!$this->platformRepository->persist($platform))
+            return $this->createResponseWithErrorCode($response, CreatePlatformResponse::REPOSITORY_INSERTION_FAILED_ERROR_CODE);
+
+        $response->success = true;
         $response->platform = $platform;
 
         return $response;
@@ -47,5 +52,18 @@ class CreatePlatformInteractor
         $platform->setUsersCount($request->usersCount);
 
         return $platform;
+    }
+
+    /**
+     * @param CreatePlatformResponse $response
+     * @param $errorCode
+     * @return CreatePlatformResponse
+     */
+    private function createResponseWithErrorCode(CreatePlatformResponse $response, $errorCode)
+    {
+        $response->success = false;
+        $response->errorCode = $errorCode;
+
+        return $response;
     }
 }

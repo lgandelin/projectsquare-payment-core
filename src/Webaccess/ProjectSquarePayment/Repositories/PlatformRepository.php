@@ -7,5 +7,5 @@ interface PlatformRepository
 {
     public function getByID($platformID): Platform;
 
-    public function persist(Platform $platform);
+    public function persist(Platform $platform): bool;
 }

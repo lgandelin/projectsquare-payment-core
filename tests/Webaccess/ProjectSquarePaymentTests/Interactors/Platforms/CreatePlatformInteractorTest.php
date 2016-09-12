@@ -2,6 +2,7 @@
 
 use Webaccess\ProjectSquarePayment\Interactors\Platforms\CreatePlatformInteractor;
 use Webaccess\ProjectSquarePayment\Requests\Platforms\CreatePlatformRequest;
+use Webaccess\ProjectSquarePayment\Responses\Platforms\CreatePlatformResponse;
 use Webaccess\ProjectSquarePaymentTests\ProjectsquareTestCase;
 
 class CreatePlatformInteractorTest extends ProjectsquareTestCase
@@ -25,5 +26,19 @@ class CreatePlatformInteractorTest extends ProjectsquareTestCase
         $this->assertEquals('Webaccess', $response->platform->getName());
         $this->assertEquals('webaccess', $response->platform->getSlug());
         $this->assertEquals(3, $response->platform->getUsersCount());
+        $this->assertTrue($response->success);
+    }
+
+    public function testCreatePlatformWithoutName()
+    {
+        $response = $this->interactor->execute(new CreatePlatformRequest([
+            'slug' => 'webaccess',
+            'usersCount' => 3
+        ]));
+
+        $this->assertInstanceOf(Webaccess\ProjectSquarePayment\Responses\Platforms\CreatePlatformResponse::class, $response);
+        $this->assertEquals(0, sizeof($this->platformRepository->objects));
+        $this->assertEquals(CreatePlatformResponse::PLATFORM_NAME_REQUIRED_ERROR_CODE, $response->errorCode);
+        $this->assertFalse($response->success);
     }
 }
