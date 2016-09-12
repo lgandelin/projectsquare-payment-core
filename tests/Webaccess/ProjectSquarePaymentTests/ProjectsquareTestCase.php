@@ -3,6 +3,7 @@
 namespace Webaccess\ProjectSquarePaymentTests;
 
 use Webaccess\ProjectSquarePayment\Entities\Platform;
+use Webaccess\ProjectSquarePayment\Repositories\InMemory\InMemoryAdministratorRepository;
 use Webaccess\ProjectSquarePayment\Repositories\InMemory\InMemoryPlatformRepository;
 
 class ProjectsquareTestCase extends \PHPUnit_Framework_TestCase
@@ -11,6 +12,7 @@ class ProjectsquareTestCase extends \PHPUnit_Framework_TestCase
     {
         parent::__construct();
         $this->platformRepository = new InMemoryPlatformRepository();
+        $this->administratorRepository = new InMemoryAdministratorRepository();
     }
 
     public function assertAmountEquals($expected, $actual)

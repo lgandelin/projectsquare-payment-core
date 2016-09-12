@@ -21,7 +21,7 @@ class CreatePlatformInteractorTest extends ProjectsquareTestCase
             'usersCount' => 3
         ]));
 
-        $this->assertInstanceOf(Webaccess\ProjectSquarePayment\Responses\Platforms\CreatePlatformResponse::class, $response);
+        $this->assertInstanceOf(CreatePlatformResponse::class, $response);
         $this->assertEquals(1, sizeof($this->platformRepository->objects));
         $this->assertEquals('Webaccess', $response->platform->getName());
         $this->assertEquals('webaccess', $response->platform->getSlug());
@@ -36,7 +36,7 @@ class CreatePlatformInteractorTest extends ProjectsquareTestCase
             'usersCount' => 3
         ]));
 
-        $this->assertInstanceOf(Webaccess\ProjectSquarePayment\Responses\Platforms\CreatePlatformResponse::class, $response);
+        $this->assertInstanceOf(CreatePlatformResponse::class, $response);
         $this->assertEquals(0, sizeof($this->platformRepository->objects));
         $this->assertEquals(CreatePlatformResponse::PLATFORM_NAME_REQUIRED, $response->errorCode);
         $this->assertFalse($response->success);
@@ -52,7 +52,7 @@ class CreatePlatformInteractorTest extends ProjectsquareTestCase
             'usersCount' => 3
         ]));
 
-        $this->assertInstanceOf(Webaccess\ProjectSquarePayment\Responses\Platforms\CreatePlatformResponse::class, $response);
+        $this->assertInstanceOf(CreatePlatformResponse::class, $response);
         $this->assertEquals(1, sizeof($this->platformRepository->objects));
         $this->assertEquals(CreatePlatformResponse::PLATFORM_SLUG_UNAVAILABLE, $response->errorCode);
         $this->assertFalse($response->success);
@@ -65,7 +65,7 @@ class CreatePlatformInteractorTest extends ProjectsquareTestCase
             'slug' => 'webaccess',
         ]));
 
-        $this->assertInstanceOf(Webaccess\ProjectSquarePayment\Responses\Platforms\CreatePlatformResponse::class, $response);
+        $this->assertInstanceOf(CreatePlatformResponse::class, $response);
         $this->assertEquals(0, sizeof($this->platformRepository->objects));
         $this->assertEquals(CreatePlatformResponse::PLATFORM_USERS_COUNT_REQUIRED, $response->errorCode);
         $this->assertFalse($response->success);

@@ -11,7 +11,7 @@ class CreatePlatformResponse extends Response
     const PLATFORM_SLUG_UNAVAILABLE = -3;
     const PLATFORM_USERS_COUNT_REQUIRED = -4;
 
-    public $platform;
     public $success;
     public $errorCode;
+    public $platform;
 }
