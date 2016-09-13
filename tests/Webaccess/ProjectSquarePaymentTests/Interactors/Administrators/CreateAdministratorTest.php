@@ -38,4 +38,23 @@ class CreateAdministratorTest extends ProjectsquareTestCase
         $this->assertEquals('France', $response->administrator->getCountry());
         $this->assertTrue($response->success);
     }
+
+    public function testCreateAdministratorWithoutEmail()
+    {
+        $response = $this->interactor->execute(new CreateAdministratorRequest([
+            'password' => '111aaa',
+            'lastName' => 'Gandelin',
+            'firstName' => 'Louis',
+            'address' => '17, rue du lac Saint André',
+            'zipCode' => '73370',
+            'city' => 'Le Bourget du Lac',
+            'state' => 'Savoie',
+            'country' => 'France',
+        ]));
+
+        $this->assertInstanceOf(CreateAdministratorResponse::class, $response);
+        $this->assertEquals(0, sizeof($this->administratorRepository->objects));
+        $this->assertEquals(CreateAdministratorResponse::ADMINISTRATOR_EMAIL_REQUIRED, $response->errorCode);
+        $this->assertFalse($response->success);
+    }
 }

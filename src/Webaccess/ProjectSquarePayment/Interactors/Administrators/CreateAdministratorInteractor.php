@@ -28,10 +28,19 @@ class CreateAdministratorInteractor
         $errorCode = null;
         $administrator = $this->createObjectFromRequest($request);
 
-        /*if (!$administrator->getName())
-            $errorCode = CreateAdministratorResponse::ADMINISTRATOR_NAME_REQUIRED;*/
+        if (!$administrator->getEmail())
+            $errorCode = CreateAdministratorResponse::ADMINISTRATOR_EMAIL_REQUIRED;
 
-        if (!$this->administratorRepository->persist($administrator))
+        elseif (!$administrator->getPassword())
+            $errorCode = CreateAdministratorResponse::ADMINISTRATOR_PASSWORD_REQUIRED;
+
+        elseif (!$administrator->getLastName())
+            $errorCode = CreateAdministratorResponse::ADMINISTRATOR_LAST_NAME_REQUIRED;
+
+        elseif (!$administrator->getFirstName())
+            $errorCode = CreateAdministratorResponse::ADMINISTRATOR_FIRST_NAME_REQUIRED;
+
+        elseif (!$this->administratorRepository->persist($administrator))
             $errorCode = CreateAdministratorResponse::REPOSITORY_INSERTION_FAILED;
 
         return ($errorCode === null) ? $this->createSuccessResponse($administrator) : $this->createErrorResponse($errorCode);
@@ -63,11 +72,10 @@ class CreateAdministratorInteractor
      */
     private function createErrorResponse($errorCode): CreateAdministratorResponse
     {
-        $response = new CreateAdministratorResponse();
-        $response->success = false;
-        $response->errorCode = $errorCode;
-
-        return $response;
+        return new CreateAdministratorResponse([
+            'success' => false,
+            'errorCode' => $errorCode
+        ]);
     }
 
     /**
@@ -76,10 +84,9 @@ class CreateAdministratorInteractor
      */
     private function createSuccessResponse(Administrator $administrator): CreateAdministratorResponse
     {
-        $response = new CreateAdministratorResponse();
-        $response->success = true;
-        $response->administrator = $administrator;
-
-        return $response;
+        return new CreateAdministratorResponse([
+            'success' => true,
+            'administrator' => $administrator
+        ]);
     }
 }
