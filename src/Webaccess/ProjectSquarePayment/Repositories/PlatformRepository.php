@@ -5,7 +5,7 @@ use Webaccess\ProjectSquarePayment\Entities\Platform;
 
 interface PlatformRepository
 {
-    public function getByID($platformID): Platform;
+    public function getByID($platformID);
 
     public function getBySlug($platformSlug);
 

@@ -72,11 +72,10 @@ class CreatePlatformInteractor
      */
     private function createErrorResponse($errorCode): CreatePlatformResponse
     {
-        $response = new CreatePlatformResponse();
-        $response->success = false;
-        $response->errorCode = $errorCode;
-
-        return $response;
+        return new CreatePlatformResponse([
+            'success' => false,
+            'errorCode' => $errorCode
+        ]);
     }
 
     /**
@@ -85,10 +84,9 @@ class CreatePlatformInteractor
      */
     private function createSuccessResponse(Platform $platform): CreatePlatformResponse
     {
-        $response = new CreatePlatformResponse();
-        $response->success = true;
-        $response->platform = $platform;
-
-        return $response;
+        return new CreatePlatformResponse([
+            'success' => true,
+            'platform' => $platform
+        ]);
     }
 }

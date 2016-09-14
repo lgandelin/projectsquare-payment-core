@@ -19,9 +19,9 @@ class InMemoryPlatformRepository implements PlatformRepository
         return sizeof($this->objects) + 1;
     }
 
-    public function getByID($platformID): Platform
+    public function getByID($platformID)
     {
-        return $this->objects[$platformID];
+        return (isset($this->objects[$platformID])) ? $this->objects[$platformID] : false;
     }
 
     public function getBySlug($platformSlug)
