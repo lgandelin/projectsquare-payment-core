@@ -26,8 +26,13 @@ class FundPlatformAccountInteractor
             $errorCode = FundPlatformAccountResponse::PLATFORM_NOT_FOUND_ERROR_CODE;
         elseif (!$this->isAmountValid($request->amount))
             $errorCode = FundPlatformAccountResponse::INVALID_AMOUNT_ERROR_CODE;
-        else
+        else {
             $platform->setAccountBalance($platform->getAccountBalance() + $request->amount);
+
+            if (!$this->platformRepository->persist($platform)) {
+                $errorCode = FundPlatformAccountResponse::REPOSITORY_UPDATE_FAILED;
+            }
+        }
 
         return ($errorCode === null) ? $this->createSuccessResponse() : $this->createErrorResponse($errorCode);
     }

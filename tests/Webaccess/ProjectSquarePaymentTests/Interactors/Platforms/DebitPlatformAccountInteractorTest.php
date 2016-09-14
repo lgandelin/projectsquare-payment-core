@@ -21,8 +21,10 @@ class DebitPlatformAccountBalanceInteractorTest extends ProjectsquareTestCase
         ]));
 
         $this->assertInstanceOf(DebitPlatformAccountResponse::class, $response);
-        $this->assertAmountEquals(58.34, $platform->getAccountBalance());
         $this->assertTrue($response->success);
+
+        $platform = $this->platformRepository->getByID($platform->getID());
+        $this->assertAmountEquals(58.34, $platform->getAccountBalance());
     }
 
     public function testDebitPlatformAccountWithNonExistingPlatform()

@@ -22,8 +22,10 @@ class FundPlatformAccountInteractorTest extends ProjectsquareTestCase
         ]));
 
         $this->assertInstanceOf(FundPlatformAccountResponse::class, $response);
-        $this->assertAmountEquals(95.18, $platform->getAccountBalance());
         $this->assertTrue($response->success);
+
+        $platform = $this->platformRepository->getByID($platform->getID());
+        $this->assertAmountEquals(95.18, $platform->getAccountBalance());
     }
 
     public function testFundPlatformAccountWithNonExistingPlatform()

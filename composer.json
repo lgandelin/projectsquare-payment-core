@@ -1,7 +1,7 @@
 {
-    "name": "webaccess/projectsquare-payment",
+    "name": "webaccess/projectsquare-payment-core",
     "type": "library",
-    "description": "Projectsquare - Payment package",
+    "description": "Projectsquare Payment - Core package",
     "authors": [
         {
             "name": "Louis Gandelin",

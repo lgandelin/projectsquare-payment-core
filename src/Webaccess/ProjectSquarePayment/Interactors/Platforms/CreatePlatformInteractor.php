@@ -38,7 +38,7 @@ class CreatePlatformInteractor
             $errorCode = CreatePlatformResponse::PLATFORM_SLUG_UNAVAILABLE;
 
         elseif (!$this->platformRepository->persist($platform))
-            $errorCode = CreatePlatformResponse::REPOSITORY_INSERTION_FAILED;
+            $errorCode = CreatePlatformResponse::REPOSITORY_CREATION_FAILED;
 
         return ($errorCode === null) ? $this->createSuccessResponse($platform) : $this->createErrorResponse($errorCode);
     }

@@ -27,6 +27,10 @@ class DebitPlatformAccountInteractor
         else {
             $amount = (new GetPlatformUsageAmountInteractor($this->platformRepository))->getDailyCost($platform->getID());
             $platform->setAccountBalance($platform->getAccountBalance() - $amount);
+
+            if (!$this->platformRepository->persist($platform)) {
+                $errorCode = DebitPlatformAccountResponse::REPOSITORY_UPDATE_FAILED;
+            }
         }
 
         return ($errorCode === null) ? $this->createSuccessResponse() : $this->createErrorResponse($errorCode);

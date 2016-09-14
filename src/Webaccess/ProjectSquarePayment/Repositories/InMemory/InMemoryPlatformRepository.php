@@ -21,14 +21,14 @@ class InMemoryPlatformRepository implements PlatformRepository
 
     public function getByID($platformID)
     {
-        return (isset($this->objects[$platformID])) ? $this->objects[$platformID] : false;
+        return (isset($this->objects[$platformID])) ? clone $this->objects[$platformID] : false;
     }
 
     public function getBySlug($platformSlug)
     {
         foreach ($this->objects as $platform) {
             if ($platform->getSlug() == $platformSlug) {
-                return $platform;
+                return clone $platform;
             }
         }
 
@@ -37,9 +37,10 @@ class InMemoryPlatformRepository implements PlatformRepository
 
     public function persist(Platform $platform): bool
     {
-        $platformID = $platform->getID() ? $platform->getID() : $this->getNextID();
-        $platform->setId($platformID);
-        $this->objects[$platformID] = $platform;
+        if (!$platform->getID()) {
+            $platform->setId($this->getNextID());
+        }
+        $this->objects[$platform->getID()] = $platform;
 
         return true;
     }

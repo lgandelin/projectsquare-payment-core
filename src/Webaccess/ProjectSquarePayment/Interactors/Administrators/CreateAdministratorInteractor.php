@@ -41,7 +41,7 @@ class CreateAdministratorInteractor
             $errorCode = CreateAdministratorResponse::ADMINISTRATOR_FIRST_NAME_REQUIRED;
 
         elseif (!$this->administratorRepository->persist($administrator))
-            $errorCode = CreateAdministratorResponse::REPOSITORY_INSERTION_FAILED;
+            $errorCode = CreateAdministratorResponse::REPOSITORY_CREATION_FAILED;
 
         return ($errorCode === null) ? $this->createSuccessResponse($administrator) : $this->createErrorResponse($errorCode);
     }

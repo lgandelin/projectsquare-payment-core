@@ -26,9 +26,10 @@ class InMemoryAdministratorRepository implements AdministratorRepository
 
     public function persist(Administrator $administrator): bool
     {
-        $administratorID = $administrator->getID() ? $administrator->getID() : $this->getNextID();
-        $administrator->setId($administratorID);
-        $this->objects[$administratorID] = $administrator;
+        if (!$administrator->getID()) {
+            $administrator->setId($this->getNextID());
+        }
+        $this->objects[$administrator->getID()] = $administrator;
 
         return true;
     }
