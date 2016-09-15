@@ -2,6 +2,7 @@
 
 namespace Webaccess\ProjectSquarePayment\Interactors\Platforms;
 
+use DateTime;
 use Webaccess\ProjectSquarePayment\Entities\Platform;
 use Webaccess\ProjectSquarePayment\Repositories\PlatformRepository;
 use Webaccess\ProjectSquarePayment\Requests\Platforms\CreatePlatformRequest;
@@ -31,11 +32,14 @@ class CreatePlatformInteractor
         if (!$platform->getName())
             $errorCode = CreatePlatformResponse::PLATFORM_NAME_REQUIRED;
 
-        elseif (!$platform->getUsersCount())
-            $errorCode = CreatePlatformResponse::PLATFORM_USERS_COUNT_REQUIRED;
+        elseif (!$platform->getSlug())
+            $errorCode = CreatePlatformResponse::PLATFORM_SLUG_REQUIRED;
 
         elseif (!$this->isSlugAvailable($platform))
             $errorCode = CreatePlatformResponse::PLATFORM_SLUG_UNAVAILABLE;
+
+        elseif (!$platform->getUsersCount())
+            $errorCode = CreatePlatformResponse::PLATFORM_USERS_COUNT_REQUIRED;
 
         elseif (!$this->platformRepository->persist($platform))
             $errorCode = CreatePlatformResponse::REPOSITORY_CREATION_FAILED;
@@ -53,6 +57,7 @@ class CreatePlatformInteractor
         $platform->setName($request->name);
         $platform->setSlug($request->slug);
         $platform->setUsersCount($request->usersCount);
+        $platform->setCreationDate(new DateTime());
 
         return $platform;
     }

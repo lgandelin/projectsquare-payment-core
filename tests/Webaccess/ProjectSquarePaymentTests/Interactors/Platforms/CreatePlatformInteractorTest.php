@@ -26,6 +26,7 @@ class CreatePlatformInteractorTest extends ProjectsquareTestCase
         $this->assertEquals('Webaccess', $response->platform->getName());
         $this->assertEquals('webaccess', $response->platform->getSlug());
         $this->assertEquals(3, $response->platform->getUsersCount());
+        $this->assertEquals(new DateTime(), $response->platform->getCreationDate());
         $this->assertTrue($response->success);
     }
 
@@ -58,7 +59,7 @@ class CreatePlatformInteractorTest extends ProjectsquareTestCase
         $this->assertFalse($response->success);
     }
 
-    public function testCreatePlatformWithoutUsers()
+    public function testCreatePlatformWithoutUsersCount()
     {
         $response = $this->interactor->execute(new CreatePlatformRequest([
             'name' => 'Webaccess',
@@ -68,6 +69,19 @@ class CreatePlatformInteractorTest extends ProjectsquareTestCase
         $this->assertInstanceOf(CreatePlatformResponse::class, $response);
         $this->assertEquals(0, sizeof($this->platformRepository->objects));
         $this->assertEquals(CreatePlatformResponse::PLATFORM_USERS_COUNT_REQUIRED, $response->errorCode);
+        $this->assertFalse($response->success);
+    }
+
+    public function testCreatePlatformWithoutSlug()
+    {
+        $response = $this->interactor->execute(new CreatePlatformRequest([
+            'name' => 'Webaccess',
+            'usersCount' => 3
+        ]));
+
+        $this->assertInstanceOf(CreatePlatformResponse::class, $response);
+        $this->assertEquals(0, sizeof($this->platformRepository->objects));
+        $this->assertEquals(CreatePlatformResponse::PLATFORM_SLUG_REQUIRED, $response->errorCode);
         $this->assertFalse($response->success);
     }
 }
