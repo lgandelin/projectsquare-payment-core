@@ -85,4 +85,18 @@ class CreatePlatformInteractorTest extends ProjectsquareTestCase
         $this->assertEquals(CreatePlatformResponse::PLATFORM_SLUG_REQUIRED, $response->errorCode);
         $this->assertFalse($response->success);
     }
+
+    public function testCreatePlatformWithInvalidSlug()
+    {
+        $response = $this->interactor->execute(new CreatePlatformRequest([
+            'name' => 'Webaccess',
+            'slug' => 'web.access',
+            'usersCount' => 3
+        ]));
+
+        $this->assertInstanceOf(CreatePlatformResponse::class, $response);
+        $this->assertEquals(0, sizeof($this->platformRepository->objects));
+        $this->assertEquals(CreatePlatformResponse::PLATFORM_SLUG_INVALID, $response->errorCode);
+        $this->assertFalse($response->success);
+    }
 }

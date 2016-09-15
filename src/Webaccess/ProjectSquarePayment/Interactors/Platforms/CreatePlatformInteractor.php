@@ -35,8 +35,11 @@ class CreatePlatformInteractor
         elseif (!$platform->getSlug())
             $errorCode = CreatePlatformResponse::PLATFORM_SLUG_REQUIRED;
 
-        elseif (!$this->isSlugAvailable($platform))
+        elseif (!$this->isSlugAvailable($platform->getSlug()))
             $errorCode = CreatePlatformResponse::PLATFORM_SLUG_UNAVAILABLE;
+
+        elseif (!$this->isSlugValid($platform->getSlug()))
+            $errorCode = CreatePlatformResponse::PLATFORM_SLUG_INVALID;
 
         elseif (!$platform->getUsersCount())
             $errorCode = CreatePlatformResponse::PLATFORM_USERS_COUNT_REQUIRED;
@@ -63,12 +66,21 @@ class CreatePlatformInteractor
     }
 
     /**
-     * @param Platform $platform
+     * @param $platformSlug
      * @return bool
      */
-    private function isSlugAvailable(Platform $platform)
+    private function isSlugAvailable($platformSlug)
     {
-        return !$this->platformRepository->getBySlug($platform->getSlug());
+        return !$this->platformRepository->getBySlug($platformSlug);
+    }
+
+    /**
+     * @param $platformSlug
+     * @return int
+     */
+    private function isSlugValid($platformSlug)
+    {
+        return preg_match('/^[a-z0-9](-?[a-z0-9]+)*$/i', $platformSlug);
     }
 
     /**
