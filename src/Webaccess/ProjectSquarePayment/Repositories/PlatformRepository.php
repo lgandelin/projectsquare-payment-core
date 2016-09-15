@@ -10,4 +10,6 @@ interface PlatformRepository
     public function getBySlug($platformSlug);
 
     public function persist(Platform $platform);
+
+    public function deleteByID($platformID);
 }

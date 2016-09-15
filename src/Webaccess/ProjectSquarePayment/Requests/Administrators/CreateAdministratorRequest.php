@@ -11,7 +11,7 @@ class CreateAdministratorRequest extends Request
     public $lastName;
     public $firstName;
     public $billingAddress;
-    public $zipCode;
+    public $zipcode;
     public $city;
     public $platformID;
 }

@@ -61,7 +61,7 @@ class CreateAdministratorInteractor
         $administrator->setLastName($request->lastName);
         $administrator->setFirstName($request->firstName);
         $administrator->setBillingAddress($request->billingAddress);
-        $administrator->setZipCode($request->zipCode);
+        $administrator->setZipcode($request->zipcode);
         $administrator->setCity($request->city);
         $administrator->setPlatformID($request->platformID);
 

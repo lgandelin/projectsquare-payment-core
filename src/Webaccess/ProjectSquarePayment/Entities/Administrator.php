@@ -10,7 +10,7 @@ class Administrator
     private $lastName;
     private $firstName;
     private $billingAddress;
-    private $zipCode;
+    private $zipcode;
     private $city;
     private $platformID;
 
@@ -76,12 +76,12 @@ class Administrator
 
     public function getZipCode()
     {
-        return $this->zipCode;
+        return $this->zipcode;
     }
 
-    public function setZipCode($zipCode)
+    public function setZipcode($zipcode)
     {
-        $this->zipCode = $zipCode;
+        $this->zipcode = $zipcode;
     }
 
     public function getCity()

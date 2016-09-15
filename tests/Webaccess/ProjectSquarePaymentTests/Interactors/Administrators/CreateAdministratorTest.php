@@ -23,7 +23,7 @@ class CreateAdministratorTest extends ProjectsquareTestCase
             'lastName' => 'Gandelin',
             'firstName' => 'Louis',
             'billingAddress' => '17, rue du lac Saint André',
-            'zipCode' => '73370',
+            'zipcode' => '73370',
             'city' => 'Le Bourget du Lac',
             'platformID' => $platform->getId(),
         ]));
@@ -46,7 +46,7 @@ class CreateAdministratorTest extends ProjectsquareTestCase
             'lastName' => 'Gandelin',
             'firstName' => 'Louis',
             'billingAddress' => '17, rue du lac Saint André',
-            'zipCode' => '73370',
+            'zipcode' => '73370',
             'city' => 'Le Bourget du Lac',
             'platformID' => $platform->getID(),
         ]));
@@ -65,7 +65,7 @@ class CreateAdministratorTest extends ProjectsquareTestCase
             'lastName' => 'Gandelin',
             'firstName' => 'Louis',
             'billingAddress' => '17, rue du lac Saint André',
-            'zipCode' => '73370',
+            'zipcode' => '73370',
             'city' => 'Le Bourget du Lac',
         ]));
 

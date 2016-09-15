@@ -44,4 +44,11 @@ class InMemoryPlatformRepository implements PlatformRepository
 
         return true;
     }
+
+    public function deleteByID($platformID)
+    {
+        if (isset($this->objects[$platformID])) {
+            unset($this->objects[$platformID]);
+        }
+    }
 }
