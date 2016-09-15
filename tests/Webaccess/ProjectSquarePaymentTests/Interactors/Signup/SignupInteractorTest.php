@@ -4,6 +4,7 @@ use Webaccess\ProjectSquarePayment\Interactors\Signup\SignupInteractor;
 use Webaccess\ProjectSquarePayment\Requests\Signup\SignupRequest;
 use Webaccess\ProjectSquarePayment\Responses\Administrators\CreateAdministratorResponse;
 use Webaccess\ProjectSquarePayment\Responses\Platforms\CreatePlatformResponse;
+use Webaccess\ProjectSquarePayment\Responses\Signup\CheckPlatformSlugResponse;
 use Webaccess\ProjectSquarePayment\Responses\Signup\SignupResponse;
 use Webaccess\ProjectSquarePaymentTests\ProjectsquareTestCase;
 
@@ -64,6 +65,28 @@ class SignupInteractorTest extends ProjectsquareTestCase
         $this->assertEquals(0, sizeof($this->platformRepository->objects));
         $this->assertEquals(0, sizeof($this->administratorRepository->objects));
         $this->assertEquals(CreatePlatformResponse::PLATFORM_SLUG_REQUIRED, $response->errorCode);
+        $this->assertFalse($response->success);
+    }
+
+    public function testSignupWithInvalidPlatformSlug()
+    {
+        $response = $this->interactor->execute(new SignupRequest([
+            'platformName' => 'Webaccess',
+            'platformSlug' => 'web@ccess',
+            'platformUsersCount' => 3,
+            'administratorEmail' => 'lgandelin@web-access.fr',
+            'administratorPassword' => '111aaa',
+            'administratorLastName' => 'Gandelin',
+            'administratorFirstName' => 'Louis',
+            'administratorBillingAddress' => '17, rue du lac Saint André',
+            'administratorZipcode' => '73370',
+            'administratorCity' => 'Le Bourget du Lac',
+        ]));
+
+        $this->assertInstanceOf(SignupResponse::class, $response);
+        $this->assertEquals(0, sizeof($this->platformRepository->objects));
+        $this->assertEquals(0, sizeof($this->administratorRepository->objects));
+        $this->assertEquals(CheckPlatformSlugResponse::PLATFORM_SLUG_INVALID, $response->errorCode);
         $this->assertFalse($response->success);
     }
 

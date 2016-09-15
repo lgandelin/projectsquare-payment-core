@@ -1,8 +1,10 @@
 <?php
 
 use Webaccess\ProjectSquarePayment\Interactors\Platforms\CreatePlatformInteractor;
+use Webaccess\ProjectSquarePayment\Interactors\Signup\CheckPlatformSlugInteractor;
 use Webaccess\ProjectSquarePayment\Requests\Platforms\CreatePlatformRequest;
 use Webaccess\ProjectSquarePayment\Responses\Platforms\CreatePlatformResponse;
+use Webaccess\ProjectSquarePayment\Responses\Signup\CheckPlatformSlugResponse;
 use Webaccess\ProjectSquarePaymentTests\ProjectsquareTestCase;
 
 class CreatePlatformInteractorTest extends ProjectsquareTestCase
@@ -56,7 +58,7 @@ class CreatePlatformInteractorTest extends ProjectsquareTestCase
 
         $this->assertInstanceOf(CreatePlatformResponse::class, $response);
         $this->assertEquals(1, sizeof($this->platformRepository->objects));
-        $this->assertEquals(CreatePlatformResponse::PLATFORM_SLUG_UNAVAILABLE, $response->errorCode);
+        $this->assertEquals(CheckPlatformSlugResponse::PLATFORM_SLUG_UNAVAILABLE, $response->errorCode);
         $this->assertFalse($response->success);
     }
 
@@ -96,7 +98,7 @@ class CreatePlatformInteractorTest extends ProjectsquareTestCase
 
         $this->assertInstanceOf(CreatePlatformResponse::class, $response);
         $this->assertEquals(0, sizeof($this->platformRepository->objects));
-        $this->assertEquals(CreatePlatformResponse::PLATFORM_SLUG_INVALID, $response->errorCode);
+        $this->assertEquals(CheckPlatformSlugResponse::PLATFORM_SLUG_INVALID, $response->errorCode);
         $this->assertFalse($response->success);
     }
 }

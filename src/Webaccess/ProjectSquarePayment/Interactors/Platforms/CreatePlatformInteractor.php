@@ -4,9 +4,12 @@ namespace Webaccess\ProjectSquarePayment\Interactors\Platforms;
 
 use DateTime;
 use Webaccess\ProjectSquarePayment\Entities\Platform;
+use Webaccess\ProjectSquarePayment\Interactors\Signup\CheckPlatformSlugInteractor;
 use Webaccess\ProjectSquarePayment\Repositories\PlatformRepository;
 use Webaccess\ProjectSquarePayment\Requests\Platforms\CreatePlatformRequest;
+use Webaccess\ProjectSquarePayment\Requests\Signup\CheckPlatformSlugRequest;
 use Webaccess\ProjectSquarePayment\Responses\Platforms\CreatePlatformResponse;
+use Webaccess\ProjectSquarePayment\Responses\Signup\CheckPlatformSlugResponse;
 
 class CreatePlatformInteractor
 {
@@ -28,6 +31,7 @@ class CreatePlatformInteractor
     {
         $errorCode = null;
         $platform = $this->createObjectFromRequest($request);
+        $responseSlug = $this->verifyPlatformSlug($request);
 
         if (!$platform->getName())
             $errorCode = CreatePlatformResponse::PLATFORM_NAME_REQUIRED;
@@ -35,11 +39,8 @@ class CreatePlatformInteractor
         elseif (!$platform->getSlug())
             $errorCode = CreatePlatformResponse::PLATFORM_SLUG_REQUIRED;
 
-        elseif (!$this->isSlugAvailable($platform->getSlug()))
-            $errorCode = CreatePlatformResponse::PLATFORM_SLUG_UNAVAILABLE;
-
-        elseif (!$this->isSlugValid($platform->getSlug()))
-            $errorCode = CreatePlatformResponse::PLATFORM_SLUG_INVALID;
+        elseif (!$responseSlug->success)
+            $errorCode = $responseSlug->errorCode;
 
         elseif (!$platform->getUsersCount())
             $errorCode = CreatePlatformResponse::PLATFORM_USERS_COUNT_REQUIRED;
@@ -66,21 +67,14 @@ class CreatePlatformInteractor
     }
 
     /**
-     * @param $platformSlug
-     * @return bool
+     * @param CreatePlatformRequest $request
+     * @return CheckPlatformSlugResponse
      */
-    private function isSlugAvailable($platformSlug)
+    private function verifyPlatformSlug(CreatePlatformRequest $request)
     {
-        return !$this->platformRepository->getBySlug($platformSlug);
-    }
-
-    /**
-     * @param $platformSlug
-     * @return int
-     */
-    private function isSlugValid($platformSlug)
-    {
-        return preg_match('/^[a-z0-9](-?[a-z0-9]+)*$/i', $platformSlug);
+        return (new CheckPlatformSlugInteractor($this->platformRepository))->execute(new CheckPlatformSlugRequest([
+            'slug' => $request->slug,
+        ]));
     }
 
     /**
