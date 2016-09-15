@@ -14,5 +14,5 @@ class CreatePlatformResponse extends Response
 
     public $success;
     public $errorCode;
-    public $platform;
+    public $platformID;
 }

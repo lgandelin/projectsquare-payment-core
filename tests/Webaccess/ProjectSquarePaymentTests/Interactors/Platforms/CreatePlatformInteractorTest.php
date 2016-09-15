@@ -23,10 +23,11 @@ class CreatePlatformInteractorTest extends ProjectsquareTestCase
 
         $this->assertInstanceOf(CreatePlatformResponse::class, $response);
         $this->assertEquals(1, sizeof($this->platformRepository->objects));
-        $this->assertEquals('Webaccess', $response->platform->getName());
-        $this->assertEquals('webaccess', $response->platform->getSlug());
-        $this->assertEquals(3, $response->platform->getUsersCount());
-        $this->assertEquals(new DateTime(), $response->platform->getCreationDate());
+        $platform = $this->platformRepository->getByID($response->platformID);
+        $this->assertEquals('Webaccess', $platform->getName());
+        $this->assertEquals('webaccess', $platform->getSlug());
+        $this->assertEquals(3, $platform->getUsersCount());
+        $this->assertEquals(new DateTime(), $platform->getCreationDate());
         $this->assertTrue($response->success);
     }
 

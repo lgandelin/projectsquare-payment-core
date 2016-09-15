@@ -19,12 +19,12 @@ class InMemoryAdministratorRepository implements AdministratorRepository
         return sizeof($this->objects) + 1;
     }
 
-    public function getByID($administratorID): Administrator
+    public function getByID($administratorID)
     {
-        return $this->objects[$administratorID];
+        return (isset($this->objects[$administratorID])) ? clone $this->objects[$administratorID] : false;
     }
 
-    public function persist(Administrator $administrator): bool
+    public function persist(Administrator $administrator)
     {
         if (!$administrator->getID()) {
             $administrator->setId($this->getNextID());

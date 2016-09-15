@@ -41,10 +41,10 @@ class CreatePlatformInteractor
         elseif (!$platform->getUsersCount())
             $errorCode = CreatePlatformResponse::PLATFORM_USERS_COUNT_REQUIRED;
 
-        elseif (!$this->platformRepository->persist($platform))
+        elseif (!$platformID = $this->platformRepository->persist($platform))
             $errorCode = CreatePlatformResponse::REPOSITORY_CREATION_FAILED;
 
-        return ($errorCode === null) ? $this->createSuccessResponse($platform) : $this->createErrorResponse($errorCode);
+        return ($errorCode === null) ? $this->createSuccessResponse($platformID) : $this->createErrorResponse($errorCode);
     }
 
     /**
@@ -84,14 +84,14 @@ class CreatePlatformInteractor
     }
 
     /**
-     * @param $platform
+     * @param $platformID
      * @return CreatePlatformResponse
      */
-    private function createSuccessResponse(Platform $platform): CreatePlatformResponse
+    private function createSuccessResponse($platformID): CreatePlatformResponse
     {
         return new CreatePlatformResponse([
             'success' => true,
-            'platform' => $platform
+            'platformID' => $platformID
         ]);
     }
 }

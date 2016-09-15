@@ -35,7 +35,7 @@ class InMemoryPlatformRepository implements PlatformRepository
         return false;
     }
 
-    public function persist(Platform $platform): bool
+    public function persist(Platform $platform)
     {
         if (!$platform->getID()) {
             $platform->setId($this->getNextID());

@@ -40,10 +40,13 @@ class CreateAdministratorInteractor
         elseif (!$administrator->getFirstName())
             $errorCode = CreateAdministratorResponse::ADMINISTRATOR_FIRST_NAME_REQUIRED;
 
-        elseif (!$this->administratorRepository->persist($administrator))
+        elseif (!$administrator->getPlatformID())
+            $errorCode = CreateAdministratorResponse::PLATFORM_ID_REQUIRED;
+
+        elseif (!$administratorID = $this->administratorRepository->persist($administrator))
             $errorCode = CreateAdministratorResponse::REPOSITORY_CREATION_FAILED;
 
-        return ($errorCode === null) ? $this->createSuccessResponse($administrator) : $this->createErrorResponse($errorCode);
+        return ($errorCode === null) ? $this->createSuccessResponse($administratorID) : $this->createErrorResponse($errorCode);
     }
 
     /**
@@ -57,11 +60,10 @@ class CreateAdministratorInteractor
         $administrator->setPassword($request->password);
         $administrator->setLastName($request->lastName);
         $administrator->setFirstName($request->firstName);
-        $administrator->setAddress($request->address);
+        $administrator->setBillingAddress($request->billingAddress);
         $administrator->setZipCode($request->zipCode);
         $administrator->setCity($request->city);
-        $administrator->setState($request->state);
-        $administrator->setCountry($request->country);
+        $administrator->setPlatformID($request->platformID);
 
         return $administrator;
     }
@@ -79,14 +81,14 @@ class CreateAdministratorInteractor
     }
 
     /**
-     * @param $administrator
+     * @param $administratorID
      * @return CreateAdministratorResponse
      */
-    private function createSuccessResponse(Administrator $administrator): CreateAdministratorResponse
+    private function createSuccessResponse($administratorID): CreateAdministratorResponse
     {
         return new CreateAdministratorResponse([
             'success' => true,
-            'administrator' => $administrator
+            'administratorID' => $administratorID
         ]);
     }
 }

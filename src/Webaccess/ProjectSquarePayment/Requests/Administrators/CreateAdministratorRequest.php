@@ -10,9 +10,8 @@ class CreateAdministratorRequest extends Request
     public $password;
     public $lastName;
     public $firstName;
-    public $address;
+    public $billingAddress;
     public $zipCode;
     public $city;
-    public $state;
-    public $country;
+    public $platformID;
 }

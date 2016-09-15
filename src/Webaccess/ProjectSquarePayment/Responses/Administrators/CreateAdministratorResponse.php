@@ -11,8 +11,9 @@ class CreateAdministratorResponse extends Response
     const ADMINISTRATOR_FIRST_NAME_REQUIRED = -3;
     const ADMINISTRATOR_EMAIL_REQUIRED = -4;
     const ADMINISTRATOR_PASSWORD_REQUIRED = -5;
+    const PLATFORM_ID_REQUIRED = -6;
 
     public $success;
     public $errorCode;
-    public $administrator;
+    public $administratorID;
 }
