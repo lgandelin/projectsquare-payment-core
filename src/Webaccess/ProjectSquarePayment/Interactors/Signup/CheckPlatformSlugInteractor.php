@@ -18,7 +18,7 @@ class CheckPlatformSlugInteractor
         $this->platformRepository = $platformRepository;
     }
 
-    public function execute(CheckPlatformSlugRequest $request): CheckPlatformSlugResponse
+    public function execute(CheckPlatformSlugRequest $request)
     {
         $errorCode = null;
 
@@ -53,7 +53,7 @@ class CheckPlatformSlugInteractor
      * @param $errorCode
      * @return CheckPlatformSlugResponse
      */
-    private function createErrorResponse($errorCode): CheckPlatformSlugResponse
+    private function createErrorResponse($errorCode)
     {
         return new CheckPlatformSlugResponse([
             'success' => false,
@@ -64,7 +64,7 @@ class CheckPlatformSlugInteractor
     /**
      * @return CheckPlatformSlugResponse
      */
-    private function createSuccessResponse(): CheckPlatformSlugResponse
+    private function createSuccessResponse()
     {
         return new CheckPlatformSlugResponse([
             'success' => true

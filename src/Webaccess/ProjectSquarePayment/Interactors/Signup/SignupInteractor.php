@@ -30,7 +30,7 @@ class SignupInteractor
      * @param SignupRequest $request
      * @return SignupResponse
      */
-    public function execute(SignupRequest $request): SignupResponse
+    public function execute(SignupRequest $request)
     {
         $responsePlatform = $this->createPlatform($request);
 
@@ -86,7 +86,7 @@ class SignupInteractor
      * @param $errorCode
      * @return SignupResponse
      */
-    private function createErrorResponse($errorCode): SignupResponse
+    private function createErrorResponse($errorCode)
     {
         return new SignupResponse([
             'success' => false,
@@ -99,7 +99,7 @@ class SignupInteractor
      * @param $administratorID
      * @return SignupResponse
      */
-    private function createSuccessResponse($platformID, $administratorID): SignupResponse
+    private function createSuccessResponse($platformID, $administratorID)
     {
         return new SignupResponse([
             'success' => true,

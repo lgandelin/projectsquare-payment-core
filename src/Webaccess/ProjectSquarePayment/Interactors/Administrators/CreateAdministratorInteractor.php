@@ -23,7 +23,7 @@ class CreateAdministratorInteractor
      * @param CreateAdministratorRequest $request
      * @return CreateAdministratorResponse
      */
-    public function execute(CreateAdministratorRequest $request): CreateAdministratorResponse
+    public function execute(CreateAdministratorRequest $request)
     {
         $errorCode = null;
         $administrator = $this->createObjectFromRequest($request);
@@ -53,7 +53,7 @@ class CreateAdministratorInteractor
      * @param CreateAdministratorRequest $request
      * @return Administrator
      */
-    private function createObjectFromRequest(CreateAdministratorRequest $request): Administrator
+    private function createObjectFromRequest(CreateAdministratorRequest $request)
     {
         $administrator = new Administrator();
         $administrator->setEmail($request->email);
@@ -72,7 +72,7 @@ class CreateAdministratorInteractor
      * @param $errorCode
      * @return CreateAdministratorResponse
      */
-    private function createErrorResponse($errorCode): CreateAdministratorResponse
+    private function createErrorResponse($errorCode)
     {
         return new CreateAdministratorResponse([
             'success' => false,
@@ -84,7 +84,7 @@ class CreateAdministratorInteractor
      * @param $administratorID
      * @return CreateAdministratorResponse
      */
-    private function createSuccessResponse($administratorID): CreateAdministratorResponse
+    private function createSuccessResponse($administratorID)
     {
         return new CreateAdministratorResponse([
             'success' => true,

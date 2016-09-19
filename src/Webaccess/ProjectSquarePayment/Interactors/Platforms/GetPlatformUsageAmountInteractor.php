@@ -20,7 +20,7 @@ class GetPlatformUsageAmountInteractor
      * @param $platformID
      * @return float
      */
-    public function getMonthlyCost($platformID): float
+    public function getMonthlyCost($platformID)
     {
         $platform = $this->platformRepository->getByID($platformID);
 
@@ -31,7 +31,7 @@ class GetPlatformUsageAmountInteractor
      * @param $platformID
      * @return float
      */
-    public function getDailyCost($platformID): float
+    public function getDailyCost($platformID)
     {
         return $this->getMonthlyCost($platformID) / date('t');
     }

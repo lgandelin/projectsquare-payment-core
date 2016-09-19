@@ -27,7 +27,7 @@ class CreatePlatformInteractor
      * @param CreatePlatformRequest $request
      * @return CreatePlatformResponse
      */
-    public function execute(CreatePlatformRequest $request): CreatePlatformResponse
+    public function execute(CreatePlatformRequest $request)
     {
         $errorCode = null;
         $platform = $this->createObjectFromRequest($request);
@@ -55,7 +55,7 @@ class CreatePlatformInteractor
      * @param CreatePlatformRequest $request
      * @return Platform
      */
-    private function createObjectFromRequest(CreatePlatformRequest $request): Platform
+    private function createObjectFromRequest(CreatePlatformRequest $request)
     {
         $platform = new Platform();
         $platform->setName($request->name);
@@ -81,7 +81,7 @@ class CreatePlatformInteractor
      * @param $errorCode
      * @return CreatePlatformResponse
      */
-    private function createErrorResponse($errorCode): CreatePlatformResponse
+    private function createErrorResponse($errorCode)
     {
         return new CreatePlatformResponse([
             'success' => false,
@@ -93,7 +93,7 @@ class CreatePlatformInteractor
      * @param $platformID
      * @return CreatePlatformResponse
      */
-    private function createSuccessResponse($platformID): CreatePlatformResponse
+    private function createSuccessResponse($platformID)
     {
         return new CreatePlatformResponse([
             'success' => true,
