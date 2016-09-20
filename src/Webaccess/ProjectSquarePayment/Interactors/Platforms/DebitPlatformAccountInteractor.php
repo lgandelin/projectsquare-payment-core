@@ -18,7 +18,7 @@ class DebitPlatformAccountInteractor
         $this->platformRepository = $platformRepository;
     }
 
-    public function execute(DebitPlatformAccountRequest $request): DebitPlatformAccountResponse
+    public function execute(DebitPlatformAccountRequest $request)
     {
         $errorCode = null;
 

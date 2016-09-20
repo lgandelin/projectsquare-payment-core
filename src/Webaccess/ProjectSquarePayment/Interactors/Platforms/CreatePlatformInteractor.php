@@ -2,10 +2,14 @@
 
 namespace Webaccess\ProjectSquarePayment\Interactors\Platforms;
 
+use DateTime;
 use Webaccess\ProjectSquarePayment\Entities\Platform;
+use Webaccess\ProjectSquarePayment\Interactors\Signup\CheckPlatformSlugInteractor;
 use Webaccess\ProjectSquarePayment\Repositories\PlatformRepository;
 use Webaccess\ProjectSquarePayment\Requests\Platforms\CreatePlatformRequest;
+use Webaccess\ProjectSquarePayment\Requests\Signup\CheckPlatformSlugRequest;
 use Webaccess\ProjectSquarePayment\Responses\Platforms\CreatePlatformResponse;
+use Webaccess\ProjectSquarePayment\Responses\Signup\CheckPlatformSlugResponse;
 
 class CreatePlatformInteractor
 {
@@ -23,54 +27,61 @@ class CreatePlatformInteractor
      * @param CreatePlatformRequest $request
      * @return CreatePlatformResponse
      */
-    public function execute(CreatePlatformRequest $request): CreatePlatformResponse
+    public function execute(CreatePlatformRequest $request)
     {
         $errorCode = null;
         $platform = $this->createObjectFromRequest($request);
+        $responseSlug = $this->verifyPlatformSlug($request);
 
         if (!$platform->getName())
             $errorCode = CreatePlatformResponse::PLATFORM_NAME_REQUIRED;
 
+        elseif (!$platform->getSlug())
+            $errorCode = CreatePlatformResponse::PLATFORM_SLUG_REQUIRED;
+
+        elseif (!$responseSlug->success)
+            $errorCode = $responseSlug->errorCode;
+
         elseif (!$platform->getUsersCount())
             $errorCode = CreatePlatformResponse::PLATFORM_USERS_COUNT_REQUIRED;
 
-        elseif (!$this->isSlugAvailable($platform))
-            $errorCode = CreatePlatformResponse::PLATFORM_SLUG_UNAVAILABLE;
-
-        elseif (!$this->platformRepository->persist($platform))
+        elseif (!$platformID = $this->platformRepository->persist($platform))
             $errorCode = CreatePlatformResponse::REPOSITORY_CREATION_FAILED;
 
-        return ($errorCode === null) ? $this->createSuccessResponse($platform) : $this->createErrorResponse($errorCode);
+        return ($errorCode === null) ? $this->createSuccessResponse($platformID) : $this->createErrorResponse($errorCode);
     }
 
     /**
      * @param CreatePlatformRequest $request
      * @return Platform
      */
-    private function createObjectFromRequest(CreatePlatformRequest $request): Platform
+    private function createObjectFromRequest(CreatePlatformRequest $request)
     {
         $platform = new Platform();
         $platform->setName($request->name);
         $platform->setSlug($request->slug);
         $platform->setUsersCount($request->usersCount);
+        $platform->setCreationDate(new DateTime());
 
         return $platform;
     }
 
     /**
-     * @param Platform $platform
-     * @return bool
+     * @param CreatePlatformRequest $request
+     * @return CheckPlatformSlugResponse
      */
-    private function isSlugAvailable(Platform $platform)
+    private function verifyPlatformSlug(CreatePlatformRequest $request)
     {
-        return !$this->platformRepository->getBySlug($platform->getSlug());
+        return (new CheckPlatformSlugInteractor($this->platformRepository))->execute(new CheckPlatformSlugRequest([
+            'slug' => $request->slug,
+        ]));
     }
 
     /**
      * @param $errorCode
      * @return CreatePlatformResponse
      */
-    private function createErrorResponse($errorCode): CreatePlatformResponse
+    private function createErrorResponse($errorCode)
     {
         return new CreatePlatformResponse([
             'success' => false,
@@ -79,14 +90,14 @@ class CreatePlatformInteractor
     }
 
     /**
-     * @param $platform
+     * @param $platformID
      * @return CreatePlatformResponse
      */
-    private function createSuccessResponse(Platform $platform): CreatePlatformResponse
+    private function createSuccessResponse($platformID)
     {
         return new CreatePlatformResponse([
             'success' => true,
-            'platform' => $platform
+            'platformID' => $platformID
         ]);
     }
 }

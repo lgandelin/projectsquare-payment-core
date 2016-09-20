@@ -11,6 +11,7 @@ class Platform
     private $fixedMonthlyCost;
     private $userMonthlyCost;
     private $accountBalance;
+    private $creationDate;
 
     public function getId()
     {
@@ -80,5 +81,15 @@ class Platform
     public function setAccountBalance($accountBalance)
     {
         $this->accountBalance = $accountBalance;
+    }
+
+    public function getCreationDate()
+    {
+        return $this->creationDate;
+    }
+
+    public function setCreationDate($creationDate)
+    {
+        $this->creationDate = $creationDate;
     }
 }

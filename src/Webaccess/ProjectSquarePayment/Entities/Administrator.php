@@ -9,11 +9,10 @@ class Administrator
     private $password;
     private $lastName;
     private $firstName;
-    private $address;
-    private $zipCode;
+    private $billingAddress;
+    private $zipcode;
     private $city;
-    private $state;
-    private $country;
+    private $platformID;
 
     public function getId()
     {
@@ -65,24 +64,24 @@ class Administrator
         $this->firstName = $firstName;
     }
 
-    public function getAddress()
+    public function getBillingAddress()
     {
-        return $this->address;
+        return $this->billingAddress;
     }
 
-    public function setAddress($address)
+    public function setBillingAddress($billingAddress)
     {
-        $this->address = $address;
+        $this->billingAddress = $billingAddress;
     }
 
     public function getZipCode()
     {
-        return $this->zipCode;
+        return $this->zipcode;
     }
 
-    public function setZipCode($zipCode)
+    public function setZipcode($zipcode)
     {
-        $this->zipCode = $zipCode;
+        $this->zipcode = $zipcode;
     }
 
     public function getCity()
@@ -95,23 +94,13 @@ class Administrator
         $this->city = $city;
     }
 
-    public function getState()
+    public function getPlatformID()
     {
-        return $this->state;
+        return $this->platformID;
     }
 
-    public function setState($state)
+    public function setPlatformID($platformID)
     {
-        $this->state = $state;
-    }
-
-    public function getCountry()
-    {
-        return $this->country;
-    }
-
-    public function setCountry($country)
-    {
-        $this->country = $country;
+        $this->platformID = $platformID;
     }
 }

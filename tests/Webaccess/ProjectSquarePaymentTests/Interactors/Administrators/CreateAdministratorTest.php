@@ -16,45 +16,62 @@ class CreateAdministratorTest extends ProjectsquareTestCase
 
     public function testCreateAdministrator()
     {
+        $platform = $this->createSamplePlatform();
         $response = $this->interactor->execute(new CreateAdministratorRequest([
             'email' => 'lgandelin@web-access.fr',
             'password' => '111aaa',
             'lastName' => 'Gandelin',
             'firstName' => 'Louis',
-            'address' => '17, rue du lac Saint André',
-            'zipCode' => '73370',
+            'billingAddress' => '17, rue du lac Saint André',
+            'zipcode' => '73370',
             'city' => 'Le Bourget du Lac',
-            'state' => 'Savoie',
-            'country' => 'France',
+            'platformID' => $platform->getId(),
         ]));
 
         $this->assertInstanceOf(CreateAdministratorResponse::class, $response);
         $this->assertEquals(1, sizeof($this->administratorRepository->objects));
-        $this->assertEquals('lgandelin@web-access.fr', $response->administrator->getEmail());
-        $this->assertEquals('Gandelin', $response->administrator->getLastName());
-        $this->assertEquals('Louis', $response->administrator->getFirstName());
-        $this->assertEquals('73370', $response->administrator->getZipCode());
-        $this->assertEquals('Savoie', $response->administrator->getState());
-        $this->assertEquals('France', $response->administrator->getCountry());
+        $administrator = $this->administratorRepository->getByID($response->administratorID);
+        $this->assertEquals('lgandelin@web-access.fr', $administrator->getEmail());
+        $this->assertEquals('Gandelin', $administrator->getLastName());
+        $this->assertEquals('Louis', $administrator->getFirstName());
+        $this->assertEquals('73370', $administrator->getZipCode());
         $this->assertTrue($response->success);
     }
 
     public function testCreateAdministratorWithoutEmail()
     {
+        $platform = $this->createSamplePlatform();
         $response = $this->interactor->execute(new CreateAdministratorRequest([
             'password' => '111aaa',
             'lastName' => 'Gandelin',
             'firstName' => 'Louis',
-            'address' => '17, rue du lac Saint André',
-            'zipCode' => '73370',
+            'billingAddress' => '17, rue du lac Saint André',
+            'zipcode' => '73370',
             'city' => 'Le Bourget du Lac',
-            'state' => 'Savoie',
-            'country' => 'France',
+            'platformID' => $platform->getID(),
         ]));
 
         $this->assertInstanceOf(CreateAdministratorResponse::class, $response);
         $this->assertEquals(0, sizeof($this->administratorRepository->objects));
         $this->assertEquals(CreateAdministratorResponse::ADMINISTRATOR_EMAIL_REQUIRED, $response->errorCode);
+        $this->assertFalse($response->success);
+    }
+
+    public function testCreateAdministratorWithoutPlatformID()
+    {
+        $response = $this->interactor->execute(new CreateAdministratorRequest([
+            'email' => 'lgandelin@web-access.fr',
+            'password' => '111aaa',
+            'lastName' => 'Gandelin',
+            'firstName' => 'Louis',
+            'billingAddress' => '17, rue du lac Saint André',
+            'zipcode' => '73370',
+            'city' => 'Le Bourget du Lac',
+        ]));
+
+        $this->assertInstanceOf(CreateAdministratorResponse::class, $response);
+        $this->assertEquals(0, sizeof($this->administratorRepository->objects));
+        $this->assertEquals(CreateAdministratorResponse::PLATFORM_ID_REQUIRED, $response->errorCode);
         $this->assertFalse($response->success);
     }
 }

@@ -5,7 +5,7 @@ use Webaccess\ProjectSquarePayment\Entities\Administrator;
 
 interface AdministratorRepository
 {
-    public function getByID($administratorID): Administrator;
+    public function getByID($administratorID);
 
-    public function persist(Administrator $administrator): bool;
+    public function persist(Administrator $administrator);
 }

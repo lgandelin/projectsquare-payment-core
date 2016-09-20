@@ -23,7 +23,7 @@ class CreateAdministratorInteractor
      * @param CreateAdministratorRequest $request
      * @return CreateAdministratorResponse
      */
-    public function execute(CreateAdministratorRequest $request): CreateAdministratorResponse
+    public function execute(CreateAdministratorRequest $request)
     {
         $errorCode = null;
         $administrator = $this->createObjectFromRequest($request);
@@ -40,28 +40,30 @@ class CreateAdministratorInteractor
         elseif (!$administrator->getFirstName())
             $errorCode = CreateAdministratorResponse::ADMINISTRATOR_FIRST_NAME_REQUIRED;
 
-        elseif (!$this->administratorRepository->persist($administrator))
+        elseif (!$administrator->getPlatformID())
+            $errorCode = CreateAdministratorResponse::PLATFORM_ID_REQUIRED;
+
+        elseif (!$administratorID = $this->administratorRepository->persist($administrator))
             $errorCode = CreateAdministratorResponse::REPOSITORY_CREATION_FAILED;
 
-        return ($errorCode === null) ? $this->createSuccessResponse($administrator) : $this->createErrorResponse($errorCode);
+        return ($errorCode === null) ? $this->createSuccessResponse($administratorID) : $this->createErrorResponse($errorCode);
     }
 
     /**
      * @param CreateAdministratorRequest $request
      * @return Administrator
      */
-    private function createObjectFromRequest(CreateAdministratorRequest $request): Administrator
+    private function createObjectFromRequest(CreateAdministratorRequest $request)
     {
         $administrator = new Administrator();
         $administrator->setEmail($request->email);
         $administrator->setPassword($request->password);
         $administrator->setLastName($request->lastName);
         $administrator->setFirstName($request->firstName);
-        $administrator->setAddress($request->address);
-        $administrator->setZipCode($request->zipCode);
+        $administrator->setBillingAddress($request->billingAddress);
+        $administrator->setZipcode($request->zipcode);
         $administrator->setCity($request->city);
-        $administrator->setState($request->state);
-        $administrator->setCountry($request->country);
+        $administrator->setPlatformID($request->platformID);
 
         return $administrator;
     }
@@ -70,7 +72,7 @@ class CreateAdministratorInteractor
      * @param $errorCode
      * @return CreateAdministratorResponse
      */
-    private function createErrorResponse($errorCode): CreateAdministratorResponse
+    private function createErrorResponse($errorCode)
     {
         return new CreateAdministratorResponse([
             'success' => false,
@@ -79,14 +81,14 @@ class CreateAdministratorInteractor
     }
 
     /**
-     * @param $administrator
+     * @param $administratorID
      * @return CreateAdministratorResponse
      */
-    private function createSuccessResponse(Administrator $administrator): CreateAdministratorResponse
+    private function createSuccessResponse($administratorID)
     {
         return new CreateAdministratorResponse([
             'success' => true,
-            'administrator' => $administrator
+            'administratorID' => $administratorID
         ]);
     }
 }

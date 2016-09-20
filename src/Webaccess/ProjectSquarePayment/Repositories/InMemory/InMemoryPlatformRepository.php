@@ -35,7 +35,7 @@ class InMemoryPlatformRepository implements PlatformRepository
         return false;
     }
 
-    public function persist(Platform $platform): bool
+    public function persist(Platform $platform)
     {
         if (!$platform->getID()) {
             $platform->setId($this->getNextID());
@@ -43,5 +43,12 @@ class InMemoryPlatformRepository implements PlatformRepository
         $this->objects[$platform->getID()] = $platform;
 
         return true;
+    }
+
+    public function deleteByID($platformID)
+    {
+        if (isset($this->objects[$platformID])) {
+            unset($this->objects[$platformID]);
+        }
     }
 }
