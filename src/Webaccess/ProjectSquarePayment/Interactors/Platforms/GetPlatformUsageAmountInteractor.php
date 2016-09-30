@@ -23,8 +23,7 @@ class GetPlatformUsageAmountInteractor
     public function getMonthlyCost($platformID)
     {
         $platform = $this->platformRepository->getByID($platformID);
-
-        return $platform->getFixedMonthlyCost() + $platform->getUsersCount() * $platform->getUserMonthlyCost();
+        return $platform->getPlatformMonthlyCost() + $platform->getUsersCount() * $platform->getUserMonthlyCost();
     }
 
     /**

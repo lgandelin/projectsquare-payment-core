@@ -8,7 +8,7 @@ class Platform
     private $name;
     private $slug;
     private $usersCount;
-    private $fixedMonthlyCost;
+    private $platformMonthlyCost;
     private $userMonthlyCost;
     private $accountBalance;
     private $creationDate;
@@ -53,14 +53,14 @@ class Platform
         $this->usersCount = $usersCount;
     }
 
-    public function getFixedMonthlyCost()
+    public function getPlatformMonthlyCost()
     {
-        return $this->fixedMonthlyCost;
+        return $this->platformMonthlyCost;
     }
 
-    public function setFixedMonthlyCost($fixedMonthlyCost)
+    public function setPlatformMonthlyCost($platformMonthlyCost)
     {
-        $this->fixedMonthlyCost = $fixedMonthlyCost;
+        $this->platformMonthlyCost = $platformMonthlyCost;
     }
 
     public function getUserMonthlyCost()

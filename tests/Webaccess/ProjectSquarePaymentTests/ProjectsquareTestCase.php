@@ -25,7 +25,7 @@ class ProjectsquareTestCase extends \PHPUnit_Framework_TestCase
         $platform = new Platform();
         $platform->setName('Webaccess');
         $platform->setSlug('webaccess');
-        $platform->setFixedMonthlyCost(19.99);
+        $platform->setPlatformMonthlyCost(19.99);
         $platform->setUserMonthlyCost(9.99);
         $platform->setUsersCount(3);
         $platform->setAccountBalance(60);
