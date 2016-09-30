@@ -35,6 +35,11 @@ class InMemoryPlatformRepository implements PlatformRepository
         return false;
     }
 
+    public function getAll()
+    {
+        return $this->objects;
+    }
+
     public function persist(Platform $platform)
     {
         if (!$platform->getID()) {

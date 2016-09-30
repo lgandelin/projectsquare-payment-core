@@ -1,7 +1,6 @@
 <?php
 
 use Webaccess\ProjectSquarePayment\Interactors\Platforms\CreatePlatformInteractor;
-use Webaccess\ProjectSquarePayment\Interactors\Signup\CheckPlatformSlugInteractor;
 use Webaccess\ProjectSquarePayment\Requests\Platforms\CreatePlatformRequest;
 use Webaccess\ProjectSquarePayment\Responses\Platforms\CreatePlatformResponse;
 use Webaccess\ProjectSquarePayment\Responses\Signup\CheckPlatformSlugResponse;
