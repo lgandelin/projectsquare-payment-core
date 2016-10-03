@@ -73,7 +73,7 @@ class SignupInteractor
             'password' => $request->administratorPassword,
             'lastName' => $request->administratorLastName,
             'firstName' => $request->administratorFirstName,
-            'address' => $request->administratorBillingAddress,
+            'billingAddress' => $request->administratorBillingAddress,
             'zipcode' => $request->administratorZipcode,
             'city' => $request->administratorCity,
             'platformID' => $platformID
