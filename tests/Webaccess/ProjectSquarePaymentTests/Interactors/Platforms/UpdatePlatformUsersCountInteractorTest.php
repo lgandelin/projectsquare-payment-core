@@ -40,7 +40,7 @@ class UpdatePlatformUsersCountInteractorTest extends ProjectsquareTestCase
         $this->assertFalse($response->success);
     }
 
-    public function testUpdatePlatformUsersCountWithInvalidAmount()
+    public function testUpdatePlatformUsersCountWithInvalidCount()
     {
         $platform = $this->createSamplePlatform();
         $response = $this->interactor->execute(new UpdatePlatformUsersCountRequest([
@@ -68,6 +68,22 @@ class UpdatePlatformUsersCountInteractorTest extends ProjectsquareTestCase
         $this->assertInstanceOf(UpdatePlatformUsersCountResponse::class, $response);
         $this->assertFalse($response->success);
         $this->assertEquals(UpdatePlatformUsersCountResponse::ACTUAL_USERS_COUNT_TOO_BIG_ERROR, $response->errorCode);
+        $platform = $this->platformRepository->getByID($platform->getID());
+        $this->assertEquals(3, $platform->getUsersCount());
+    }
+
+    public function testUpdatePlatformUsersCountWithNullActualCount()
+    {
+        $platform = $this->createSamplePlatform();
+        $response = $this->interactor->execute(new UpdatePlatformUsersCountRequest([
+            'platformID' => $platform->getID(),
+            'usersCount' => 2,
+            'actualUsersCount' => null,
+        ]));
+
+        $this->assertInstanceOf(UpdatePlatformUsersCountResponse::class, $response);
+        $this->assertFalse($response->success);
+        $this->assertEquals(UpdatePlatformUsersCountResponse::INVALID_ACTUAL_USERS_COUNT, $response->errorCode);
         $platform = $this->platformRepository->getByID($platform->getID());
         $this->assertEquals(3, $platform->getUsersCount());
     }

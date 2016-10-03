@@ -28,11 +28,13 @@ class UpdatePlatformUsersCountInteractor
 
         if (!$platform = $this->platformRepository->getByID($request->platformID))
             $errorCode = UpdatePlatformUsersCountResponse::PLATFORM_NOT_FOUND_ERROR_CODE;
-        elseif(!$this->isUsersCountValid($request->usersCount, $request->actualUsersCount))
+        elseif(!$this->isUsersCountValid($request->usersCount))
             $errorCode = UpdatePlatformUsersCountResponse::INVALID_USERS_COUNT;
-        elseif(!$this->isUsersCountGreaterThanActualUsersCount($request->usersCount, $request->actualUsersCount))
+        elseif(!$this->isActualUsersCountValid($request->actualUsersCount))
+            $errorCode = UpdatePlatformUsersCountResponse::INVALID_ACTUAL_USERS_COUNT;
+        elseif(!$this->isUsersCountGreaterThanActualUsersCount($request->usersCount, $request->actualUsersCount)) {
             $errorCode = UpdatePlatformUsersCountResponse::ACTUAL_USERS_COUNT_TOO_BIG_ERROR;
-        else {
+        } else {
             $platform->setUsersCount($request->usersCount);
             $this->platformRepository->persist($platform);
         }
@@ -47,6 +49,15 @@ class UpdatePlatformUsersCountInteractor
     private function isUsersCountValid($usersCount)
     {
         return $usersCount > 0;
+    }
+
+    /**
+     * @param $actualUsersCount
+     * @return bool
+     */
+    private function isActualUsersCountValid($actualUsersCount)
+    {
+        return $actualUsersCount !== null && $actualUsersCount > 0;
     }
 
     /**
