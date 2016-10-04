@@ -8,5 +8,4 @@ class UpdatePlatformUsersCountRequest extends Request
 {
     public $platformID;
     public $usersCount;
-    public $actualUsersCount;
 }

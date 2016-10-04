@@ -3,6 +3,7 @@
 use Webaccess\ProjectSquarePayment\Interactors\Platforms\UpdatePlatformUsersCountInteractor;
 use Webaccess\ProjectSquarePayment\Requests\Platforms\UpdatePlatformUsersCountRequest;
 use Webaccess\ProjectSquarePayment\Responses\Platforms\UpdatePlatformUsersCountResponse;
+use Webaccess\ProjectSquarePayment\Services\ProjectsquareAPIMock;
 use Webaccess\ProjectSquarePaymentTests\ProjectsquareTestCase;
 
 class UpdatePlatformUsersCountInteractorTest extends ProjectsquareTestCase
@@ -10,7 +11,7 @@ class UpdatePlatformUsersCountInteractorTest extends ProjectsquareTestCase
     public function __construct()
     {
         parent::__construct();
-        $this->interactor = new UpdatePlatformUsersCountInteractor($this->platformRepository);
+        $this->interactor = new UpdatePlatformUsersCountInteractor($this->platformRepository, new ProjectsquareAPIMock(3));
     }
 
     public function testUpdatePlatformUsersCount()
@@ -19,7 +20,6 @@ class UpdatePlatformUsersCountInteractorTest extends ProjectsquareTestCase
         $response = $this->interactor->execute(new UpdatePlatformUsersCountRequest([
             'platformID' => $platform->getId(),
             'usersCount' => 4,
-            'actualUsersCount' => 3,
         ]));
 
         $this->assertInstanceOf(UpdatePlatformUsersCountResponse::class, $response);
@@ -32,7 +32,6 @@ class UpdatePlatformUsersCountInteractorTest extends ProjectsquareTestCase
     {
         $response = $this->interactor->execute(new UpdatePlatformUsersCountRequest([
             'usersCount' => 2,
-            'actualUsersCount' => 3,
         ]));
 
         $this->assertInstanceOf(UpdatePlatformUsersCountResponse::class, $response);
@@ -46,7 +45,6 @@ class UpdatePlatformUsersCountInteractorTest extends ProjectsquareTestCase
         $response = $this->interactor->execute(new UpdatePlatformUsersCountRequest([
             'platformID' => $platform->getID(),
             'usersCount' => -5,
-            'actualUsersCount' => 3,
         ]));
 
         $this->assertInstanceOf(UpdatePlatformUsersCountResponse::class, $response);
@@ -62,7 +60,6 @@ class UpdatePlatformUsersCountInteractorTest extends ProjectsquareTestCase
         $response = $this->interactor->execute(new UpdatePlatformUsersCountRequest([
             'platformID' => $platform->getID(),
             'usersCount' => 2,
-            'actualUsersCount' => 3,
         ]));
 
         $this->assertInstanceOf(UpdatePlatformUsersCountResponse::class, $response);
@@ -74,11 +71,11 @@ class UpdatePlatformUsersCountInteractorTest extends ProjectsquareTestCase
 
     public function testUpdatePlatformUsersCountWithNullActualCount()
     {
+        $this->interactor = new UpdatePlatformUsersCountInteractor($this->platformRepository, new ProjectsquareAPIMock(null));
         $platform = $this->createSamplePlatform();
         $response = $this->interactor->execute(new UpdatePlatformUsersCountRequest([
             'platformID' => $platform->getID(),
             'usersCount' => 2,
-            'actualUsersCount' => null,
         ]));
 
         $this->assertInstanceOf(UpdatePlatformUsersCountResponse::class, $response);

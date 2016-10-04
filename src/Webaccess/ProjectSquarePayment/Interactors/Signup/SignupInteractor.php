@@ -9,6 +9,8 @@ use Webaccess\ProjectSquarePayment\Repositories\PlatformRepository;
 use Webaccess\ProjectSquarePayment\Requests\Administrators\CreateAdministratorRequest;
 use Webaccess\ProjectSquarePayment\Requests\Platforms\CreatePlatformRequest;
 use Webaccess\ProjectSquarePayment\Requests\Signup\SignupRequest;
+use Webaccess\ProjectSquarePayment\Responses\Administrators\CreateAdministratorResponse;
+use Webaccess\ProjectSquarePayment\Responses\Platforms\CreatePlatformResponse;
 use Webaccess\ProjectSquarePayment\Responses\Signup\SignupResponse;
 
 class SignupInteractor
@@ -49,7 +51,7 @@ class SignupInteractor
 
     /**
      * @param SignupRequest $request
-     * @return \Webaccess\ProjectSquarePayment\Responses\Platforms\CreatePlatformResponse
+     * @return CreatePlatformResponse
      */
     private function createPlatform(SignupRequest $request)
     {
@@ -65,7 +67,7 @@ class SignupInteractor
     /**
      * @param SignupRequest $request
      * @param $platformID
-     * @return \Webaccess\ProjectSquarePayment\Responses\Administrators\CreateAdministratorResponse
+     * @return CreateAdministratorResponse
      */
     private function createAdministrator(SignupRequest $request, $platformID)
     {
