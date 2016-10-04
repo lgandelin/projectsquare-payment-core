@@ -47,7 +47,7 @@ class InMemoryPlatformRepository implements PlatformRepository
         }
         $this->objects[$platform->getID()] = $platform;
 
-        return true;
+        return $platform->getID();
     }
 
     public function deleteByID($platformID)

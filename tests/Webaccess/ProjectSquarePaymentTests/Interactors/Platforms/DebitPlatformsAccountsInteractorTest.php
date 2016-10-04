@@ -14,13 +14,17 @@ class DebitPlatformsAccountsInteractorTest extends ProjectsquareTestCase
 
     public function testDebitPlatforms()
     {
-        $platform1 = $this->createSamplePlatform();
+        $platform1 = $this->createSamplePlatform('platform1', 'platform1');
         $platform1->setUsersCount(5);
         $platform1->setAccountBalance(50);
+        $platform1->setStatus(Platform::PLATFORM_STATUS_IN_USE);
+        $this->platformRepository->persist($platform1);
 
-        $platform2 = $this->createSamplePlatform();
+        $platform2 = $this->createSamplePlatform('platform2', 'platform2');
         $platform2->setUsersCount(12);
         $platform2->setAccountBalance(187.21);
+        $platform2->setStatus(Platform::PLATFORM_STATUS_IN_USE);
+        $this->platformRepository->persist($platform2);
 
         $this->interactor->execute();
 
@@ -33,19 +37,20 @@ class DebitPlatformsAccountsInteractorTest extends ProjectsquareTestCase
 
     public function testDebitValidPlatformsOnly()
     {
-        $platform1 = $this->createSamplePlatform();
+        $platform1 = $this->createSamplePlatform('platform1', 'platform1');
+        $platform1->setStatus(Platform::PLATFORM_STATUS_IN_USE);
         $platform1->setUsersCount(5);
         $platform1->setAccountBalance(50);
 
-        $platform2 = $this->createSamplePlatform();
+        $platform2 = $this->createSamplePlatform('platform2', 'platform2');
+        $platform2->setStatus(Platform::PLATFORM_STATUS_IN_USE);
         $platform2->setUsersCount(12);
         $platform2->setAccountBalance(187.21);
 
-        $platform3 = $this->createSamplePlatform();
-        $platform3->setStatus(Platform::PLATFORM_STATUS_TRIAL_PERIOD);
+        $platform3 = $this->createSamplePlatform('platform3', 'platform3');
         $this->platformRepository->persist($platform3);
 
-        $platform4 = $this->createSamplePlatform();
+        $platform4 = $this->createSamplePlatform('platform4', 'platform4');
         $platform4->setStatus(Platform::PLATFORM_STATUS_DISABLED);
         $this->platformRepository->persist($platform4);
 

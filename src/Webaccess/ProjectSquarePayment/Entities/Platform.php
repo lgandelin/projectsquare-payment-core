@@ -4,9 +4,9 @@ namespace Webaccess\ProjectSquarePayment\Entities;
 
 class Platform
 {
+    const PLATFORM_STATUS_DISABLED = 0;
     const PLATFORM_STATUS_TRIAL_PERIOD = 1;
-    const PLATFORM_STATUS_NORMAL = 2;
-    const PLATFORM_STATUS_DISABLED = 3;
+    const PLATFORM_STATUS_IN_USE = 2;
 
     private $id;
     private $name;

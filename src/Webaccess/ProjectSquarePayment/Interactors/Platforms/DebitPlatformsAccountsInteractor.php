@@ -31,6 +31,6 @@ class DebitPlatformsAccountsInteractor
 
     private function isPlatformStatusValidForDebit($platformStatus)
     {
-        return $platformStatus == Platform::PLATFORM_STATUS_NORMAL;
+        return $platformStatus == Platform::PLATFORM_STATUS_IN_USE;
     }
 }
