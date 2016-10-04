@@ -57,6 +57,8 @@ class SignupInteractor
             'name' => $request->platformName,
             'slug' => $request->platformSlug,
             'usersCount' => $request->platformUsersCount,
+            'platformMonthlyCost' => $request->platformPlatformMonthlyCost,
+            'userMonthlyCost' => $request->platformUserMonthlyCost,
         ]));
         return $responsePlatform;
     }

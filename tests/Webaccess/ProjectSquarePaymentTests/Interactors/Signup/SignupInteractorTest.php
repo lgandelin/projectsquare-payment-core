@@ -22,6 +22,8 @@ class SignupInteractorTest extends ProjectsquareTestCase
             'platformName' => 'Webaccess',
             'platformSlug' => 'webaccess',
             'platformUsersCount' => 3,
+            'platformPlatformMonthlyCost' => 20,
+            'platformUserMonthlyCost' => 10,
             'administratorEmail' => 'lgandelin@web-access.fr',
             'administratorPassword' => '111aaa',
             'administratorLastName' => 'Gandelin',
@@ -38,6 +40,8 @@ class SignupInteractorTest extends ProjectsquareTestCase
         $this->assertEquals('Webaccess', $platform->getName());
         $this->assertEquals('webaccess', $platform->getSlug());
         $this->assertEquals(3, $platform->getUsersCount());
+        $this->assertEquals(20, $platform->getPlatformMonthlyCost());
+        $this->assertEquals(10, $platform->getUserMonthlyCost());
         $this->assertEquals(new DateTime(), $platform->getCreationDate());
         $administrator = $this->administratorRepository->getByID($response->administratorID);
         $this->assertEquals('lgandelin@web-access.fr', $administrator->getEmail());
