@@ -61,6 +61,7 @@ class CreatePlatformInteractor
         $platform->setName($request->name);
         $platform->setSlug($request->slug);
         $platform->setUsersCount($request->usersCount);
+        $platform->setStatus(Platform::PLATFORM_STATUS_TRIAL_PERIOD);
         $platform->setPlatformMonthlyCost($request->platformMonthlyCost);
         $platform->setUserMonthlyCost($request->userMonthlyCost);
         $platform->setCreationDate(new DateTime());

@@ -53,14 +53,13 @@ class SignupInteractor
      */
     private function createPlatform(SignupRequest $request)
     {
-        $responsePlatform = (new CreatePlatformInteractor($this->platformRepository))->execute(new CreatePlatformRequest([
+        return (new CreatePlatformInteractor($this->platformRepository))->execute(new CreatePlatformRequest([
             'name' => $request->platformName,
             'slug' => $request->platformSlug,
             'usersCount' => $request->platformUsersCount,
             'platformMonthlyCost' => $request->platformPlatformMonthlyCost,
             'userMonthlyCost' => $request->platformUserMonthlyCost,
         ]));
-        return $responsePlatform;
     }
 
     /**
@@ -70,7 +69,7 @@ class SignupInteractor
      */
     private function createAdministrator(SignupRequest $request, $platformID)
     {
-        $responseAdministrator = (new CreateAdministratorInteractor($this->administratorRepository))->execute(new CreateAdministratorRequest([
+        return (new CreateAdministratorInteractor($this->administratorRepository))->execute(new CreateAdministratorRequest([
             'email' => $request->administratorEmail,
             'password' => $request->administratorPassword,
             'lastName' => $request->administratorLastName,
@@ -80,8 +79,6 @@ class SignupInteractor
             'city' => $request->administratorCity,
             'platformID' => $platformID
         ]));
-
-        return $responseAdministrator;
     }
 
     /**

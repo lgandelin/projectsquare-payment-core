@@ -2,6 +2,7 @@
 
 namespace Webaccess\ProjectSquarePayment\Interactors\Platforms;
 
+use Webaccess\ProjectSquarePayment\Entities\Platform;
 use Webaccess\ProjectSquarePayment\Repositories\PlatformRepository;
 use Webaccess\ProjectSquarePayment\Requests\Platforms\DebitPlatformAccountRequest;
 
@@ -20,9 +21,16 @@ class DebitPlatformsAccountsInteractor
     public function execute()
     {
         foreach ($this->platformRepository->getAll() as $platform) {
-            (new DebitPlatformAccountInteractor($this->platformRepository))->execute(new DebitPlatformAccountRequest([
-                'platformID' => $platform->getID(),
-            ]));
+            if ($this->isPlatformStatusValidForDebit($platform->getStatus())) {
+                (new DebitPlatformAccountInteractor($this->platformRepository))->execute(new DebitPlatformAccountRequest([
+                    'platformID' => $platform->getID(),
+                ]));
+            }
         }
+    }
+
+    private function isPlatformStatusValidForDebit($platformStatus)
+    {
+        return $platformStatus == Platform::PLATFORM_STATUS_NORMAL;
     }
 }

@@ -29,9 +29,10 @@ class ProjectsquareTestCase extends \PHPUnit_Framework_TestCase
         $platform = new Platform();
         $platform->setName('Webaccess');
         $platform->setSlug('webaccess');
+        $platform->setUsersCount(3);
+        $platform->setStatus(Platform::PLATFORM_STATUS_NORMAL);
         $platform->setPlatformMonthlyCost(19.99);
         $platform->setUserMonthlyCost(9.99);
-        $platform->setUsersCount(3);
         $platform->setAccountBalance(60);
         $this->platformRepository->persist($platform);
 

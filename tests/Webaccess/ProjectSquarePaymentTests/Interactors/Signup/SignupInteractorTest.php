@@ -1,5 +1,6 @@
 <?php
 
+use Webaccess\ProjectSquarePayment\Entities\Platform;
 use Webaccess\ProjectSquarePayment\Interactors\Signup\SignupInteractor;
 use Webaccess\ProjectSquarePayment\Requests\Signup\SignupRequest;
 use Webaccess\ProjectSquarePayment\Responses\Administrators\CreateAdministratorResponse;
@@ -40,6 +41,7 @@ class SignupInteractorTest extends ProjectsquareTestCase
         $this->assertEquals('Webaccess', $platform->getName());
         $this->assertEquals('webaccess', $platform->getSlug());
         $this->assertEquals(3, $platform->getUsersCount());
+        $this->assertEquals(Platform::PLATFORM_STATUS_TRIAL_PERIOD, $platform->getStatus());
         $this->assertEquals(20, $platform->getPlatformMonthlyCost());
         $this->assertEquals(10, $platform->getUserMonthlyCost());
         $this->assertEquals(new DateTime(), $platform->getCreationDate());
