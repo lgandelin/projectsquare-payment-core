@@ -3,23 +3,23 @@
 namespace Webaccess\ProjectSquarePayment\Interactors\Platforms;
 
 use Webaccess\ProjectSquarePayment\Repositories\PlatformRepository;
+use Webaccess\ProjectSquarePayment\Repositories\RemotePlatformRepository;
 use Webaccess\ProjectSquarePayment\Requests\Platforms\UpdatePlatformUsersCountRequest;
 use Webaccess\ProjectSquarePayment\Responses\Platforms\UpdatePlatformUsersCountResponse;
-use Webaccess\ProjectSquarePayment\Services\ProjectsquareAPI;
 
 class UpdatePlatformUsersCountInteractor
 {
     private $platformRepository;
-    private $projectsquareAPIService;
+    private $remotePlateformRepository;
 
     /**
      * @param PlatformRepository $platformRepository
-     * @param ProjectsquareAPI $projectsquareAPIService
+     * @param RemotePlatformRepository $remotePlatformRepository
      */
-    public function __construct(PlatformRepository $platformRepository, ProjectsquareAPI $projectsquareAPIService)
+    public function __construct(PlatformRepository $platformRepository, RemotePlatformRepository $remotePlatformRepository)
     {
         $this->platformRepository = $platformRepository;
-        $this->projectsquareAPIService = $projectsquareAPIService;
+        $this->remotePlateformRepository = $remotePlatformRepository;
     }
 
     /**
@@ -30,20 +30,23 @@ class UpdatePlatformUsersCountInteractor
     {
         $errorCode = null;
 
-        $actualUsersCount = $this->projectsquareAPIService->getUsersLimit($request->platformID);
-
         if (!$platform = $this->platformRepository->getByID($request->platformID))
             $errorCode = UpdatePlatformUsersCountResponse::PLATFORM_NOT_FOUND_ERROR_CODE;
         elseif(!$this->isUsersCountValid($request->usersCount))
             $errorCode = UpdatePlatformUsersCountResponse::INVALID_USERS_COUNT;
-        elseif(!$this->isActualUsersCountValid($actualUsersCount))
+
+        if ($errorCode !== null) return $this->createErrorResponse($errorCode);
+
+        $remotePlatformUsersCount = $this->remotePlateformRepository->getUsersLimit($platform);
+
+        if (!$this->isActualUsersCountValid($remotePlatformUsersCount))
             $errorCode = UpdatePlatformUsersCountResponse::INVALID_ACTUAL_USERS_COUNT;
-        elseif(!$this->isUsersCountGreaterThanActualUsersCount($request->usersCount, $actualUsersCount)) {
+        elseif(!$this->isUsersCountGreaterThanActualUsersCount($request->usersCount, $remotePlatformUsersCount)) {
             $errorCode = UpdatePlatformUsersCountResponse::ACTUAL_USERS_COUNT_TOO_BIG_ERROR;
         } else {
             $platform->setUsersCount($request->usersCount);
             $this->platformRepository->persist($platform);
-            $this->projectsquareAPIService->updateUsersLimit($request->platformID, $request->usersCount);
+            $this->remotePlateformRepository->updateUsersLimit($platform, $request->usersCount);
         }
 
         return ($errorCode === null) ? $this->createSuccessResponse() : $this->createErrorResponse($errorCode);

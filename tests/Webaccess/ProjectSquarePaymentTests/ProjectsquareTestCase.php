@@ -4,7 +4,6 @@ namespace Webaccess\ProjectSquarePaymentTests;
 
 use Mockery;
 use Webaccess\ProjectSquarePayment\Context;
-use Webaccess\ProjectSquarePayment\Entities\Platform;
 use Webaccess\ProjectSquarePayment\Interactors\Platforms\CreatePlatformInteractor;
 use Webaccess\ProjectSquarePayment\Repositories\InMemory\InMemoryAdministratorRepository;
 use Webaccess\ProjectSquarePayment\Repositories\InMemory\InMemoryPlatformRepository;
