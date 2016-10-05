@@ -49,7 +49,9 @@ class SignupInteractorTest extends ProjectsquareTestCase
         $this->assertEquals('lgandelin@web-access.fr', $administrator->getEmail());
         $this->assertEquals('Gandelin', $administrator->getLastName());
         $this->assertEquals('Louis', $administrator->getFirstName());
+        $this->assertEquals('17, rue du lac Saint André', $administrator->getBillingAddress());
         $this->assertEquals('73370', $administrator->getZipCode());
+        $this->assertEquals('Le Bourget du Lac', $administrator->getCity());
         $this->assertTrue($response->success);
     }
 

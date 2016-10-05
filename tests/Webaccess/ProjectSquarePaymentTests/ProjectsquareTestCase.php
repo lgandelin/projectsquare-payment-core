@@ -4,8 +4,10 @@ namespace Webaccess\ProjectSquarePaymentTests;
 
 use Mockery;
 use Webaccess\ProjectSquarePayment\Context;
+use Webaccess\ProjectSquarePayment\Entities\Node;
 use Webaccess\ProjectSquarePayment\Interactors\Platforms\CreatePlatformInteractor;
 use Webaccess\ProjectSquarePayment\Repositories\InMemory\InMemoryAdministratorRepository;
+use Webaccess\ProjectSquarePayment\Repositories\InMemory\InMemoryNodeRepository;
 use Webaccess\ProjectSquarePayment\Repositories\InMemory\InMemoryPlatformRepository;
 use Webaccess\ProjectSquarePayment\Requests\Platforms\CreatePlatformRequest;
 
@@ -16,6 +18,7 @@ class ProjectsquareTestCase extends \PHPUnit_Framework_TestCase
         parent::__construct();
         $this->platformRepository = new InMemoryPlatformRepository();
         $this->administratorRepository = new InMemoryAdministratorRepository();
+        $this->nodeRepository = new InMemoryNodeRepository();
 
         Context::setMonth(9);
         Context::setYear(2016);
@@ -45,5 +48,15 @@ class ProjectsquareTestCase extends \PHPUnit_Framework_TestCase
         $this->platformRepository->persist($platform);
 
         return $platform;
+    }
+
+    protected function createSampleNode($identifier = 'Node', $available = false)
+    {
+        $node = new Node();
+        $node->setIdentifier($identifier);
+        $node->setAvailable($available);
+        $this->nodeRepository->persist($node);
+
+        return $node;
     }
 }

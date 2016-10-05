@@ -12,6 +12,7 @@ use Webaccess\ProjectSquarePayment\Requests\Signup\SignupRequest;
 use Webaccess\ProjectSquarePayment\Responses\Administrators\CreateAdministratorResponse;
 use Webaccess\ProjectSquarePayment\Responses\Platforms\CreatePlatformResponse;
 use Webaccess\ProjectSquarePayment\Responses\Signup\SignupResponse;
+use Webaccess\ProjectSquarePayment\Services\RemoteInfrastructureGenerator;
 
 class SignupInteractor
 {
@@ -45,6 +46,8 @@ class SignupInteractor
             $this->platformRepository->deleteByID($responsePlatform->platformID);
             return $this->createErrorResponse($responseAdministrator->errorCode);
         }
+
+        $this->createRemoteInfrastructure($request, $responsePlatform->platformID);
 
         return $this->createSuccessResponse($responsePlatform->platformID, $responseAdministrator->administratorID);
     }
@@ -81,6 +84,34 @@ class SignupInteractor
             'city' => $request->administratorCity,
             'platformID' => $platformID
         ]));
+    }
+
+    /**
+     * @param SignupRequest $request
+     * @param $platformID
+     */
+    private function createRemoteInfrastructure(SignupRequest $request, $platformID)
+    {
+        /*return (new CreateRemoteInfrastructureInteractor())->execute(new CreateRemoteInfrastructureRequest([
+            'slug' => $request->platformSlug,
+            'administratorEmail' => $request->administratorEmail,
+            'usersLimit' => $request->platformUsersCount,
+        ]));*/
+        //$this->remoteInfrastructureGenerator->launchEnvCreation($request->platformSlug, $request->administratorEmail, $request->platformUsersCount, $nodeIdentifier);
+        /*$nodeIdentifier = $this->nodeRepository->getAvailableNodeIdentifier();
+
+        if (!$nodeIdentifier) {
+            $nodeIdentifier = $this->nodeRepository->persistNewNode();
+            DigitalOceanService::launchEnvCreation($nodeIdentifier, $request->platformSlug, $request->administratorEmail, $request->usersCount);
+        } else {
+            DigitalOceanService::launchAppCreation($nodeIdentifier, $request->platformSlug, $request->administratorEmail, $request->usersCount);
+            $this->nodeRepository->setNodeUnavailable($nodeIdentifier);
+        }
+
+        $this->nodeRepository->updatePlatformNodeID($platformID, $nodeIdentifier);
+
+        $nodeIdentifier = $this->nodeRepository->persistNewNode();
+        DigitalOceanService::launchNodeCreation($nodeIdentifier);*/
     }
 
     /**
