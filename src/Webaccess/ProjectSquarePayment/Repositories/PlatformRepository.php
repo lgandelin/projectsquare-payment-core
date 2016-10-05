@@ -14,4 +14,6 @@ interface PlatformRepository
     public function persist(Platform $platform);
 
     public function deleteByID($platformID);
+
+    public function updatePlatformNodeIdentifier($platformID, $nodeIdentifier);
 }

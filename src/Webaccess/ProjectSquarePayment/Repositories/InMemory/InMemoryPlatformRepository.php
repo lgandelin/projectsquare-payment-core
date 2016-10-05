@@ -56,4 +56,9 @@ class InMemoryPlatformRepository implements PlatformRepository
             unset($this->objects[$platformID]);
         }
     }
+
+    public function updatePlatformNodeIdentifier($platformID, $nodeIdentifier)
+    {
+
+    }
 }

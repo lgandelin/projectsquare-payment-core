@@ -6,6 +6,7 @@ use Webaccess\ProjectSquarePayment\Requests\Request;
 
 class CreateInfrastructureRequest extends Request
 {
+    public $platformID;
     public $slug;
     public $administratorEmail;
     public $usersLimit;

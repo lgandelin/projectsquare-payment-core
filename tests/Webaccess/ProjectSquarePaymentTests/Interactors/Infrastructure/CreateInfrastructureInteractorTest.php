@@ -12,10 +12,11 @@ class CreateInfrastructureInteractorTest extends ProjectsquareTestCase
     {
         $remoteInfrastructureGeneratorMock = Mockery::mock(RemoteInfrastructureGenerator::class)
             ->shouldReceive('launchEnvCreation')->once()->with(Mockery::type('string'), 'webaccess', 'lgandelin@web-access.fr', 3)
+            ->shouldReceive('launchNodeCreation')->once()->with(Mockery::type('string'))
             ->shouldReceive('launchAppCreation')->never()
             ->mock();
 
-        $interactor = new CreateInfrastructureInteractor($this->nodeRepository, $remoteInfrastructureGeneratorMock);
+        $interactor = new CreateInfrastructureInteractor($this->nodeRepository, $this->platformRepository, $remoteInfrastructureGeneratorMock);
 
         $response = $interactor->execute(new CreateInfrastructureRequest([
             'slug' => 'webaccess',
@@ -34,10 +35,11 @@ class CreateInfrastructureInteractorTest extends ProjectsquareTestCase
 
         $remoteInfrastructureGeneratorMock = Mockery::mock(RemoteInfrastructureGenerator::class)
             ->shouldReceive('launchEnvCreation')->never()
+            ->shouldReceive('launchNodeCreation')->once()->with(Mockery::type('string'))
             ->shouldReceive('launchAppCreation')->once()->with('availableNode', 'webaccess', 'lgandelin@web-access.fr', 3)
             ->mock();
 
-        $interactor = new CreateInfrastructureInteractor($this->nodeRepository, $remoteInfrastructureGeneratorMock);
+        $interactor = new CreateInfrastructureInteractor($this->nodeRepository, $this->platformRepository, $remoteInfrastructureGeneratorMock);
 
         $response = $interactor->execute(new CreateInfrastructureRequest([
             'slug' => 'webaccess',
@@ -47,6 +49,7 @@ class CreateInfrastructureInteractorTest extends ProjectsquareTestCase
 
         $this->assertInstanceOf(CreateInfrastructureResponse::class, $response);
         $this->assertEquals(2, sizeof($this->nodeRepository->objects));
+        $this->assertEquals(false, $this->nodeRepository->objects[1]->isAvailable());
         $this->assertTrue($response->success);
     }
 }

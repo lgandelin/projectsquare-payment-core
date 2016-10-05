@@ -4,6 +4,7 @@ namespace Webaccess\ProjectSquarePayment\Interactors\Infrastructure;
 
 use Webaccess\ProjectSquarePayment\Entities\Node;
 use Webaccess\ProjectSquarePayment\Repositories\NodeRepository;
+use Webaccess\ProjectSquarePayment\Repositories\PlatformRepository;
 use Webaccess\ProjectSquarePayment\Requests\Infrastructure\CreateInfrastructureRequest;
 use Webaccess\ProjectSquarePayment\Responses\Infrastructure\CreateInfrastructureResponse;
 use Webaccess\ProjectSquarePayment\Services\RemoteInfrastructureGenerator;
@@ -13,9 +14,10 @@ class CreateInfrastructureInteractor
     private $nodeRepository;
     private $remoteInfrastructureGenerator;
 
-    public function __construct(NodeRepository $nodeRepository, RemoteInfrastructureGenerator $remoteInfrastructureGenerator)
+    public function __construct(NodeRepository $nodeRepository, PlatformRepository $platformRepository, RemoteInfrastructureGenerator $remoteInfrastructureGenerator)
     {
         $this->nodeRepository = $nodeRepository;
+        $this->platformRepository = $platformRepository;
         $this->remoteInfrastructureGenerator = $remoteInfrastructureGenerator;
     }
 
@@ -29,13 +31,12 @@ class CreateInfrastructureInteractor
             $this->remoteInfrastructureGenerator->launchEnvCreation($nodeIdentifier, $request->slug, $request->administratorEmail, $request->usersLimit);
         } else {
             $this->remoteInfrastructureGenerator->launchAppCreation($nodeIdentifier, $request->slug, $request->administratorEmail, $request->usersLimit);
-            //$this->nodeRepository->setNodeUnavailable($nodeIdentifier);
+            $this->nodeRepository->setNodeUnavailable($nodeIdentifier);
         }
-
-        //$this->nodeRepository->updatePlatformNodeID($platformID, $nodeIdentifier);
+        $this->platformRepository->updatePlatformNodeIdentifier($request->platformID, $nodeIdentifier);
 
         $nodeIdentifier = $this->createNewNode();
-        //DigitalOceanService::launchNodeCreation($nodeIdentifier);
+        $this->remoteInfrastructureGenerator->launchNodeCreation($nodeIdentifier);
 
         return ($errorCode === null) ? $this->createSuccessResponse() : $this->createErrorResponse($errorCode);
     }

@@ -11,4 +11,6 @@ interface NodeRepository
     public function persist(Node $node);
 
     public function getAvailableNodeIdentifier();
+
+    public function setNodeUnavailable($nodeIdentifier);
 }

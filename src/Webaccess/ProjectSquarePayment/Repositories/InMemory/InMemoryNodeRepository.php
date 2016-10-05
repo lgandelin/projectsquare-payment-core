@@ -44,4 +44,13 @@ class InMemoryNodeRepository implements NodeRepository
 
         return false;
     }
+
+    public function setNodeUnavailable($nodeIdentifier)
+    {
+        foreach ($this->objects as $node) {
+            if ($node->getIdentifier() == $nodeIdentifier) {
+                $node->setAvailable(false);
+            }
+        }
+    }
 }
