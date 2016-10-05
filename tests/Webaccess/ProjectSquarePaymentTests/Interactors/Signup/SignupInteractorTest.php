@@ -7,19 +7,23 @@ use Webaccess\ProjectSquarePayment\Responses\Administrators\CreateAdministratorR
 use Webaccess\ProjectSquarePayment\Responses\Platforms\CreatePlatformResponse;
 use Webaccess\ProjectSquarePayment\Responses\Signup\CheckPlatformSlugResponse;
 use Webaccess\ProjectSquarePayment\Responses\Signup\SignupResponse;
+use Webaccess\ProjectSquarePayment\Services\RemoteInfrastructureGenerator;
 use Webaccess\ProjectSquarePaymentTests\ProjectsquareTestCase;
 
 class SignupInteractorTest extends ProjectsquareTestCase
 {
-    public function __construct()
-    {
-        parent::__construct();
-        $this->interactor = new SignupInteractor($this->platformRepository, $this->administratorRepository);
-    }
 
     public function testSignup()
     {
-        $response = $this->interactor->execute(new SignupRequest([
+        $remoteInfrastructureGeneratorMock = Mockery::mock(RemoteInfrastructureGenerator::class)
+            ->shouldReceive('launchEnvCreation')->once()->with(Mockery::type('string'), 'webaccess', 'lgandelin@web-access.fr', 3)
+            ->shouldReceive('launchNodeCreation')->once()
+            ->shouldReceive('launchAppCreation')->never()
+            ->mock();
+
+        $interactor = new SignupInteractor($this->platformRepository, $this->administratorRepository, $this->nodeRepository, $remoteInfrastructureGeneratorMock);
+
+        $response = $interactor->execute(new SignupRequest([
             'platformName' => 'Webaccess',
             'platformSlug' => 'webaccess',
             'platformUsersCount' => 3,
@@ -57,7 +61,15 @@ class SignupInteractorTest extends ProjectsquareTestCase
 
     public function testSignupWithErrorWithPlatform()
     {
-        $response = $this->interactor->execute(new SignupRequest([
+        $remoteInfrastructureGeneratorMock = Mockery::mock(RemoteInfrastructureGenerator::class)
+            ->shouldReceive('launchEnvCreation')->never()
+            ->shouldReceive('launchNodeCreation')->never()
+            ->shouldReceive('launchAppCreation')->never()
+            ->mock();
+
+        $interactor = new SignupInteractor($this->platformRepository, $this->administratorRepository, $this->nodeRepository, $remoteInfrastructureGeneratorMock);
+
+        $response = $interactor->execute(new SignupRequest([
             'platformName' => 'Webaccess',
             'platformUsersCount' => 3,
             'administratorEmail' => 'lgandelin@web-access.fr',
@@ -78,7 +90,15 @@ class SignupInteractorTest extends ProjectsquareTestCase
 
     public function testSignupWithInvalidPlatformSlug()
     {
-        $response = $this->interactor->execute(new SignupRequest([
+        $remoteInfrastructureGeneratorMock = Mockery::mock(RemoteInfrastructureGenerator::class)
+            ->shouldReceive('launchEnvCreation')->never()
+            ->shouldReceive('launchNodeCreation')->never()
+            ->shouldReceive('launchAppCreation')->never()
+            ->mock();
+
+        $interactor = new SignupInteractor($this->platformRepository, $this->administratorRepository, $this->nodeRepository, $remoteInfrastructureGeneratorMock);
+
+        $response = $interactor->execute(new SignupRequest([
             'platformName' => 'Webaccess',
             'platformSlug' => 'web@ccess',
             'platformUsersCount' => 3,
@@ -100,7 +120,15 @@ class SignupInteractorTest extends ProjectsquareTestCase
 
     public function testSignupWithErrorWithAdministrator()
     {
-        $response = $this->interactor->execute(new SignupRequest([
+        $remoteInfrastructureGeneratorMock = Mockery::mock(RemoteInfrastructureGenerator::class)
+            ->shouldReceive('launchEnvCreation')->never()
+            ->shouldReceive('launchNodeCreation')->never()
+            ->shouldReceive('launchAppCreation')->never()
+            ->mock();
+
+        $interactor = new SignupInteractor($this->platformRepository, $this->administratorRepository, $this->nodeRepository, $remoteInfrastructureGeneratorMock);
+
+        $response = $interactor->execute(new SignupRequest([
             'platformName' => 'Webaccess',
             'platformSlug' => 'webaccess',
             'platformUsersCount' => 3,

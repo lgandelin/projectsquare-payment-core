@@ -3,13 +3,17 @@
 namespace Webaccess\ProjectSquarePayment\Interactors\Signup;
 
 use Webaccess\ProjectSquarePayment\Interactors\Administrators\CreateAdministratorInteractor;
+use Webaccess\ProjectSquarePayment\Interactors\Infrastructure\CreateInfrastructureInteractor;
 use Webaccess\ProjectSquarePayment\Interactors\Platforms\CreatePlatformInteractor;
 use Webaccess\ProjectSquarePayment\Repositories\AdministratorRepository;
+use Webaccess\ProjectSquarePayment\Repositories\NodeRepository;
 use Webaccess\ProjectSquarePayment\Repositories\PlatformRepository;
 use Webaccess\ProjectSquarePayment\Requests\Administrators\CreateAdministratorRequest;
+use Webaccess\ProjectSquarePayment\Requests\Infrastructure\CreateInfrastructureRequest;
 use Webaccess\ProjectSquarePayment\Requests\Platforms\CreatePlatformRequest;
 use Webaccess\ProjectSquarePayment\Requests\Signup\SignupRequest;
 use Webaccess\ProjectSquarePayment\Responses\Administrators\CreateAdministratorResponse;
+use Webaccess\ProjectSquarePayment\Responses\Infrastructure\CreateInfrastructureResponse;
 use Webaccess\ProjectSquarePayment\Responses\Platforms\CreatePlatformResponse;
 use Webaccess\ProjectSquarePayment\Responses\Signup\SignupResponse;
 use Webaccess\ProjectSquarePayment\Services\RemoteInfrastructureGenerator;
@@ -18,15 +22,21 @@ class SignupInteractor
 {
     private $platformRepository;
     private $administratorRepository;
+    private $nodeRepository;
+    private $remoteInfrastructureGenerator;
 
     /**
      * @param PlatformRepository $platformRepository
      * @param AdministratorRepository $administratorRepository
+     * @param NodeRepository $nodeRepository
+     * @param RemoteInfrastructureGenerator $remoteInfrastructureGenerator
      */
-    public function __construct(PlatformRepository $platformRepository, AdministratorRepository $administratorRepository)
+    public function __construct(PlatformRepository $platformRepository, AdministratorRepository $administratorRepository, NodeRepository $nodeRepository, RemoteInfrastructureGenerator $remoteInfrastructureGenerator)
     {
         $this->platformRepository = $platformRepository;
+        $this->nodeRepository = $nodeRepository;
         $this->administratorRepository = $administratorRepository;
+        $this->remoteInfrastructureGenerator = $remoteInfrastructureGenerator;
     }
 
     /**
@@ -47,7 +57,7 @@ class SignupInteractor
             return $this->createErrorResponse($responseAdministrator->errorCode);
         }
 
-        $this->createRemoteInfrastructure($request, $responsePlatform->platformID);
+        $this->createInfrastructure($request, $responsePlatform->platformID);
 
         return $this->createSuccessResponse($responsePlatform->platformID, $responseAdministrator->administratorID);
     }
@@ -89,29 +99,16 @@ class SignupInteractor
     /**
      * @param SignupRequest $request
      * @param $platformID
+     * @return CreateInfrastructureResponse
      */
-    private function createRemoteInfrastructure(SignupRequest $request, $platformID)
+    private function createInfrastructure(SignupRequest $request, $platformID)
     {
-        /*return (new CreateRemoteInfrastructureInteractor())->execute(new CreateRemoteInfrastructureRequest([
+        return (new CreateInfrastructureInteractor($this->nodeRepository, $this->platformRepository, $this->remoteInfrastructureGenerator))->execute(new CreateInfrastructureRequest([
+            'platformID' => $platformID,
             'slug' => $request->platformSlug,
             'administratorEmail' => $request->administratorEmail,
             'usersLimit' => $request->platformUsersCount,
-        ]));*/
-        //$this->remoteInfrastructureGenerator->launchEnvCreation($request->platformSlug, $request->administratorEmail, $request->platformUsersCount, $nodeIdentifier);
-        /*$nodeIdentifier = $this->nodeRepository->getAvailableNodeIdentifier();
-
-        if (!$nodeIdentifier) {
-            $nodeIdentifier = $this->nodeRepository->persistNewNode();
-            DigitalOceanService::launchEnvCreation($nodeIdentifier, $request->platformSlug, $request->administratorEmail, $request->usersCount);
-        } else {
-            DigitalOceanService::launchAppCreation($nodeIdentifier, $request->platformSlug, $request->administratorEmail, $request->usersCount);
-            $this->nodeRepository->setNodeUnavailable($nodeIdentifier);
-        }
-
-        $this->nodeRepository->updatePlatformNodeID($platformID, $nodeIdentifier);
-
-        $nodeIdentifier = $this->nodeRepository->persistNewNode();
-        DigitalOceanService::launchNodeCreation($nodeIdentifier);*/
+        ]));
     }
 
     /**
