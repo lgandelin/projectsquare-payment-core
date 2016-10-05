@@ -22,13 +22,11 @@ class UpdatePlatformsStatusesInteractor
     {
         foreach ($this->platformRepository->getAll() as $platform) {
             if ($this->isPlatformInTrialPeriod($platform) && $this->isTrialPeriodFinished($platform)) {
-                $platform->setStatus(Platform::PLATFORM_STATUS_IN_USE);
-                $this->platformRepository->persist($platform);
+                $this->updateStatus($platform, Platform::PLATFORM_STATUS_IN_USE);
             }
 
             if ($this->isPlatformInUse($platform) && $this->isPlatformAccountBalanceIsNegative($platform)) {
-                $platform->setStatus(Platform::PLATFORM_STATUS_DISABLED);
-                $this->platformRepository->persist($platform);
+                $this->updateStatus($platform, Platform::PLATFORM_STATUS_DISABLED);
             }
         }
     }
@@ -67,5 +65,16 @@ class UpdatePlatformsStatusesInteractor
     private function isPlatformAccountBalanceIsNegative(Platform $platform)
     {
         return $platform->getAccountBalance() < 0;
+    }
+
+    /**
+     * @param Platform $platform
+     * @param $status
+     */
+    private function updateStatus(Platform $platform, $status)
+    {
+        $platform->setStatus($status);
+        $this->platformRepository->persist($platform);
+        //$this->projectsquareAPIService->updateStatus($request->platformID, $status);
     }
 }

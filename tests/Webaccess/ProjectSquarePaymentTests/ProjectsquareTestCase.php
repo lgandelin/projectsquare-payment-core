@@ -2,6 +2,7 @@
 
 namespace Webaccess\ProjectSquarePaymentTests;
 
+use Mockery;
 use Webaccess\ProjectSquarePayment\Context;
 use Webaccess\ProjectSquarePayment\Entities\Platform;
 use Webaccess\ProjectSquarePayment\Interactors\Platforms\CreatePlatformInteractor;
@@ -19,6 +20,11 @@ class ProjectsquareTestCase extends \PHPUnit_Framework_TestCase
 
         Context::setMonth(9);
         Context::setYear(2016);
+    }
+
+    public function tearDown()
+    {
+        Mockery::close();
     }
 
     public function assertAmountEquals($expected, $actual)

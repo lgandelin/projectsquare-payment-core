@@ -3,20 +3,24 @@
 use Webaccess\ProjectSquarePayment\Interactors\Platforms\UpdatePlatformUsersCountInteractor;
 use Webaccess\ProjectSquarePayment\Requests\Platforms\UpdatePlatformUsersCountRequest;
 use Webaccess\ProjectSquarePayment\Responses\Platforms\UpdatePlatformUsersCountResponse;
-use Webaccess\ProjectSquarePayment\Services\ProjectsquareAPIMock;
+use Webaccess\ProjectSquarePayment\Services\ProjectsquareAPI;
 use Webaccess\ProjectSquarePaymentTests\ProjectsquareTestCase;
 
 class UpdatePlatformUsersCountInteractorTest extends ProjectsquareTestCase
 {
-    public function __construct()
-    {
-        parent::__construct();
-        $this->interactor = new UpdatePlatformUsersCountInteractor($this->platformRepository, new ProjectsquareAPIMock(3));
-    }
+    private $interactor;
 
     public function testUpdatePlatformUsersCount()
     {
         $platform = $this->createSamplePlatform();
+
+        $projectsquareAPIMock = Mockery::mock(ProjectsquareAPI::class)
+            ->shouldReceive('getUsersLimit')->once()->with($platform->getID())->andReturn(3)
+            ->shouldReceive('updateUsersLimit')->once()->with($platform->getID(), 4)
+            ->mock();
+
+        $this->interactor = new UpdatePlatformUsersCountInteractor($this->platformRepository, $projectsquareAPIMock);
+
         $response = $this->interactor->execute(new UpdatePlatformUsersCountRequest([
             'platformID' => $platform->getId(),
             'usersCount' => 4,
@@ -30,6 +34,13 @@ class UpdatePlatformUsersCountInteractorTest extends ProjectsquareTestCase
 
     public function testUpdatePlatformUsersCountWithoutPlatform()
     {
+        $projectsquareAPIMock = Mockery::mock(ProjectsquareAPI::class)
+            ->shouldReceive('getUsersLimit')->once()->with(null)->andReturn(3)
+            ->shouldReceive('updateUsersLimit')->never()
+            ->mock();
+
+        $this->interactor = new UpdatePlatformUsersCountInteractor($this->platformRepository, $projectsquareAPIMock);
+
         $response = $this->interactor->execute(new UpdatePlatformUsersCountRequest([
             'usersCount' => 2,
         ]));
@@ -42,6 +53,14 @@ class UpdatePlatformUsersCountInteractorTest extends ProjectsquareTestCase
     public function testUpdatePlatformUsersCountWithInvalidCount()
     {
         $platform = $this->createSamplePlatform();
+
+        $projectsquareAPIMock = Mockery::mock(ProjectsquareAPI::class)
+            ->shouldReceive('getUsersLimit')->once()->with($platform->getID())->andReturn(3)
+            ->shouldReceive('updateUsersLimit')->never()
+            ->mock();
+
+        $this->interactor = new UpdatePlatformUsersCountInteractor($this->platformRepository, $projectsquareAPIMock);
+
         $response = $this->interactor->execute(new UpdatePlatformUsersCountRequest([
             'platformID' => $platform->getID(),
             'usersCount' => -5,
@@ -57,6 +76,14 @@ class UpdatePlatformUsersCountInteractorTest extends ProjectsquareTestCase
     public function testUpdatePlatformUsersCountWithTooManyActualUsers()
     {
         $platform = $this->createSamplePlatform();
+
+        $projectsquareAPIMock = Mockery::mock(ProjectsquareAPI::class)
+            ->shouldReceive('getUsersLimit')->once()->with($platform->getID())->andReturn(3)
+            ->shouldReceive('updateUsersLimit')->never()
+            ->mock();
+
+        $this->interactor = new UpdatePlatformUsersCountInteractor($this->platformRepository, $projectsquareAPIMock);
+
         $response = $this->interactor->execute(new UpdatePlatformUsersCountRequest([
             'platformID' => $platform->getID(),
             'usersCount' => 2,
@@ -71,8 +98,15 @@ class UpdatePlatformUsersCountInteractorTest extends ProjectsquareTestCase
 
     public function testUpdatePlatformUsersCountWithNullActualCount()
     {
-        $this->interactor = new UpdatePlatformUsersCountInteractor($this->platformRepository, new ProjectsquareAPIMock(null));
         $platform = $this->createSamplePlatform();
+
+        $projectsquareAPIMock = Mockery::mock(ProjectsquareAPI::class)
+            ->shouldReceive('getUsersLimit')->once()->with($platform->getID())->andReturn(null)
+            ->shouldReceive('updateUsersLimit')->never()
+            ->mock();
+
+        $this->interactor = new UpdatePlatformUsersCountInteractor($this->platformRepository, $projectsquareAPIMock);
+
         $response = $this->interactor->execute(new UpdatePlatformUsersCountRequest([
             'platformID' => $platform->getID(),
             'usersCount' => 2,
