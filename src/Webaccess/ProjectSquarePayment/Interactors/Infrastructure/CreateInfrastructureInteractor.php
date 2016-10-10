@@ -42,6 +42,28 @@ class CreateInfrastructureInteractor
     }
 
     /**
+     * @return string
+     */
+    private function createNewNode()
+    {
+        $node = new Node();
+        $nodeIdentifier = $this->generateNodeIdentifier();
+        $node->setIdentifier($nodeIdentifier);
+        $node->setAvailable(false);
+        $this->nodeRepository->persist($node);
+
+        return $nodeIdentifier;
+    }
+
+    /**
+     * @return string
+     */
+    private function generateNodeIdentifier()
+    {
+        return uniqid();
+    }
+
+    /**
      * @return CreateInfrastructureResponse
      */
     private function createSuccessResponse()
@@ -61,27 +83,5 @@ class CreateInfrastructureInteractor
             'success' => false,
             'errorCode' => $errorCode
         ]);
-    }
-
-    /**
-     * @return string
-     */
-    private function generateNodeIdentifier()
-    {
-        return uniqid();
-    }
-
-    /**
-     * @return string
-     */
-    private function createNewNode()
-    {
-        $node = new Node();
-        $nodeIdentifier = $this->generateNodeIdentifier();
-        $node->setIdentifier($nodeIdentifier);
-        $node->setAvailable(false);
-        $this->nodeRepository->persist($node);
-
-        return $nodeIdentifier;
     }
 }
