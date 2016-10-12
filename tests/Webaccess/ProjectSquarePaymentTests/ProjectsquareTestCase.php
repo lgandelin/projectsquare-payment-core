@@ -5,10 +5,12 @@ namespace Webaccess\ProjectSquarePaymentTests;
 use Mockery;
 use Webaccess\ProjectSquarePayment\Context;
 use Webaccess\ProjectSquarePayment\Entities\Node;
+use Webaccess\ProjectSquarePayment\Entities\Transaction;
 use Webaccess\ProjectSquarePayment\Interactors\Platforms\CreatePlatformInteractor;
 use Webaccess\ProjectSquarePayment\Repositories\InMemory\InMemoryAdministratorRepository;
 use Webaccess\ProjectSquarePayment\Repositories\InMemory\InMemoryNodeRepository;
 use Webaccess\ProjectSquarePayment\Repositories\InMemory\InMemoryPlatformRepository;
+use Webaccess\ProjectSquarePayment\Repositories\InMemory\InMemoryTransactionRepository;
 use Webaccess\ProjectSquarePayment\Requests\Platforms\CreatePlatformRequest;
 
 class ProjectsquareTestCase extends \PHPUnit_Framework_TestCase
@@ -19,6 +21,7 @@ class ProjectsquareTestCase extends \PHPUnit_Framework_TestCase
         $this->platformRepository = new InMemoryPlatformRepository();
         $this->administratorRepository = new InMemoryAdministratorRepository();
         $this->nodeRepository = new InMemoryNodeRepository();
+        $this->transactionRepository = new InMemoryTransactionRepository;
 
         Context::setMonth(9);
         Context::setYear(2016);
@@ -58,5 +61,16 @@ class ProjectsquareTestCase extends \PHPUnit_Framework_TestCase
         $this->nodeRepository->persist($node);
 
         return $node;
+    }
+
+    protected function createSampleTransaction($identifier, $amount)
+    {
+        $transaction = new Transaction();
+        $transaction->setIdentifier($identifier);
+        $transaction->setStatus(Transaction::TRANSACTION_STATUS_IN_PROGRESS);
+        $transaction->setAmount($amount);
+        $this->transactionRepository->persist($transaction);
+
+        return $transaction;
     }
 }
