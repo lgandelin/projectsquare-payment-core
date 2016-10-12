@@ -1,10 +1,10 @@
 <?php
 
-namespace Webaccess\ProjectSquarePayment\Interactors\Platforms;
+namespace Webaccess\ProjectSquarePayment\Interactors\Payment;
 
 use Webaccess\ProjectSquarePayment\Repositories\PlatformRepository;
-use Webaccess\ProjectSquarePayment\Requests\Platforms\FundPlatformAccountRequest;
-use Webaccess\ProjectSquarePayment\Responses\Platforms\FundPlatformAccountResponse;
+use Webaccess\ProjectSquarePayment\Requests\Payment\FundPlatformAccountRequest;
+use Webaccess\ProjectSquarePayment\Responses\Payment\FundPlatformAccountResponse;
 
 class FundPlatformAccountInteractor
 {

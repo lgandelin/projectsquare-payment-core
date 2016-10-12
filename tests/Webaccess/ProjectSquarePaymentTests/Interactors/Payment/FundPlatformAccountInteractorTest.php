@@ -1,8 +1,8 @@
 <?php
 
-use Webaccess\ProjectSquarePayment\Interactors\Platforms\FundPlatformAccountInteractor;
-use Webaccess\ProjectSquarePayment\Requests\Platforms\FundPlatformAccountRequest;
-use Webaccess\ProjectSquarePayment\Responses\Platforms\FundPlatformAccountResponse;
+use Webaccess\ProjectSquarePayment\Interactors\Payment\FundPlatformAccountInteractor;
+use Webaccess\ProjectSquarePayment\Requests\Payment\FundPlatformAccountRequest;
+use Webaccess\ProjectSquarePayment\Responses\Payment\FundPlatformAccountResponse;
 use Webaccess\ProjectSquarePaymentTests\ProjectsquareTestCase;
 
 class FundPlatformAccountInteractorTest extends ProjectsquareTestCase

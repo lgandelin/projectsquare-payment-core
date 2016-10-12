@@ -1,6 +1,6 @@
 <?php
 
-namespace Webaccess\ProjectSquarePayment\Responses\Platforms;
+namespace Webaccess\ProjectSquarePayment\Responses\Payment;
 
 use Webaccess\ProjectSquarePayment\Responses\Response;
 

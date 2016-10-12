@@ -1,6 +1,6 @@
 <?php
 
-namespace Webaccess\ProjectSquarePayment\Requests\Platforms;
+namespace Webaccess\ProjectSquarePayment\Requests\Payment;
 
 use Webaccess\ProjectSquarePayment\Requests\Request;
 
