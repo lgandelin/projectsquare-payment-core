@@ -63,12 +63,13 @@ class ProjectsquareTestCase extends \PHPUnit_Framework_TestCase
         return $node;
     }
 
-    protected function createSampleTransaction($identifier, $amount)
+    protected function createSampleTransaction($identifier, $amount, $platformID = null)
     {
         $transaction = new Transaction();
         $transaction->setIdentifier($identifier);
         $transaction->setStatus(Transaction::TRANSACTION_STATUS_IN_PROGRESS);
         $transaction->setAmount($amount);
+        $transaction->setPlatformID($platformID);
         $this->transactionRepository->persist($transaction);
 
         return $transaction;

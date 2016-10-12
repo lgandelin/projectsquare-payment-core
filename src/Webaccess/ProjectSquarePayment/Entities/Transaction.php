@@ -11,9 +11,10 @@ class Transaction
     private $id;
     private $identifier;
     private $amount;
+    private $platformID;
     private $paymentMean;
     private $status;
-    private $bankCode;
+    private $responseCode;
 
     public function getId()
     {
@@ -65,13 +66,23 @@ class Transaction
         $this->status = $status;
     }
 
-    public function getBankCode()
+    public function getResponseCode()
     {
-        return $this->bankCode;
+        return $this->responseCode;
     }
 
-    public function setBankCode($bankCode)
+    public function setResponseCode($responseCode)
     {
-        $this->bankCode = $bankCode;
+        $this->responseCode = $responseCode;
+    }
+
+    public function getPlatformID()
+    {
+        return $this->platformID;
+    }
+
+    public function setPlatformID($platformID)
+    {
+        $this->platformID = $platformID;
     }
 }

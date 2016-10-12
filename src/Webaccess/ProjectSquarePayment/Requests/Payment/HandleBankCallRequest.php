@@ -8,6 +8,7 @@ class HandleBankCallRequest extends Request
 {
     public $transactionIdentifier;
     public $amount;
-    public $bankParameters;
+    public $data;
     public $seal;
+    public $parameters;
 }

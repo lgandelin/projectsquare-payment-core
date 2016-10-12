@@ -2,8 +2,10 @@
 
 namespace Webaccess\ProjectSquarePayment\Interactors\Payment;
 
+use Webaccess\ProjectSquarePayment\Entities\Transaction;
 use Webaccess\ProjectSquarePayment\Repositories\PlatformRepository;
 use Webaccess\ProjectSquarePayment\Repositories\TransactionRepository;
+use Webaccess\ProjectSquarePayment\Requests\Payment\FundPlatformAccountRequest;
 use Webaccess\ProjectSquarePayment\Requests\Payment\HandleBankCallRequest;
 use Webaccess\ProjectSquarePayment\Responses\Payment\HandleBankCallResponse;
 use Webaccess\ProjectSquarePayment\Services\BankService;
@@ -34,25 +36,78 @@ class HandleBankCallInteractor
     {
         $errorCode = null;
 
-        if (!$transaction = $this->transactionRepository->getByIdentifier($request->transactionIdentifier)) {
+        if (!$transaction = $this->transactionRepository->getByIdentifier($request->transactionIdentifier))
             $errorCode = HandleBankCallResponse::TRANSACTION_NOT_FOUND_ERROR_CODE;
-        } elseif (!$this->checkTransactionAmount($transaction, $request->amount)) {
+        elseif (!$this->checkTransactionAmount($transaction, $request->amount))
             $errorCode = HandleBankCallResponse::INVALID_AMOUNT_ERROR_CODE;
-        } elseif (!$this->checkSignature($request->bankParameters, $request->seal)) {
+        elseif (!$this->checkSignature($request->data, $request->seal))
             $errorCode = HandleBankCallResponse::SIGNATURE_CHECK_FAILED_ERROR_CODE;
+        elseif (!$this->isTransactionAlreadyBeenProcessed($transaction)) {
+            $this->updateTransactionAfterSuccess($request, $transaction);
+
+            $responseFundPlatform = (new FundPlatformAccountInteractor($this->platformRepository))->execute(new FundPlatformAccountRequest([
+                'platformID' => $transaction->getPlatformID(),
+                'amount' => $request->amount,
+            ]));
+
+            if (!$responseFundPlatform->success)
+                $errorCode = $responseFundPlatform->errorCode;
         }
+
+        if ($errorCode != null && $transaction)
+            $this->updateTransactionAfterError($transaction);
 
         return ($errorCode === null) ? $this->createSuccessResponse() : $this->createErrorResponse($errorCode);
     }
 
-    private function checkTransactionAmount($transaction, $amount)
+    /**
+     * @param Transaction $transaction
+     * @param $amount
+     * @return bool
+     */
+    private function checkTransactionAmount(Transaction $transaction, $amount)
     {
         return $transaction->getAmount() == $amount;
     }
 
-    private function checkSignature($bankParameters, $seal)
+    /**
+     * @param $data
+     * @param $seal
+     * @return mixed
+     */
+    private function checkSignature($data, $seal)
     {
-        return $this->bankService->checkSignature($bankParameters, $seal);
+        return $this->bankService->checkSignature($data, $seal);
+    }
+
+    /**
+     * @param $transaction
+     * @return bool
+     */
+    private function isTransactionAlreadyBeenProcessed(Transaction $transaction)
+    {
+        return $transaction->getStatus() !== Transaction::TRANSACTION_STATUS_IN_PROGRESS;
+    }
+
+    /**
+     * @param HandleBankCallRequest $request
+     * @param Transaction $transaction
+     */
+    private function updateTransactionAfterSuccess(HandleBankCallRequest $request, Transaction $transaction)
+    {
+        $transaction->setPaymentMean($request->parameters['paymentMeanType'] . ' - ' . $request->parameters['paymentMeanBrand']);
+        $transaction->setResponseCode($request->parameters['responseCode']);
+        $transaction->setStatus(Transaction::TRANSACTION_STATUS_VALIDATED);
+        $this->transactionRepository->persist($transaction);
+    }
+
+    /**
+     * @param Transaction $transaction
+     */
+    private function updateTransactionAfterError(Transaction $transaction)
+    {
+        $transaction->setStatus(Transaction::TRANSACTION_STATUS_ERROR);
+        $this->transactionRepository->persist($transaction);
     }
 
     /**

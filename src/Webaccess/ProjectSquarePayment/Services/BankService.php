@@ -4,5 +4,5 @@ namespace Webaccess\ProjectSquarePayment\Services;
 
 interface BankService
 {
-    public function checkSignature($parameters, $seal);
+    public function checkSignature($data, $seal);
 }
