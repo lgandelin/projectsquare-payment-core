@@ -58,11 +58,17 @@ class HandleBankCallInteractorTest extends ProjectsquareTestCase
         $interactor->execute(new HandleBankCallRequest([
             'transactionIdentifier' => $transactionIdentifier,
             'amount' => 50.00,
+            'parameters' => [
+                'responseCode' => '00',
+            ]
         ]));
 
         $response = $interactor->execute(new HandleBankCallRequest([
             'transactionIdentifier' => $transactionIdentifier,
             'amount' => 50.00,
+            'parameters' => [
+                'responseCode' => '00',
+            ]
         ]));
 
         $platform = $this->platformRepository->getByID($platform->getID());
@@ -73,6 +79,40 @@ class HandleBankCallInteractorTest extends ProjectsquareTestCase
 
         $transaction = $this->transactionRepository->getByIdentifier($transactionIdentifier);
         $this->assertEquals(Transaction::TRANSACTION_STATUS_VALIDATED, $transaction->getStatus());
+    }
+
+    public function testHandleBankCallWithInvalidResponseCode()
+    {
+        $transactionIdentifier = 'a5eb87x';
+        $bankServiceMock = Mockery::mock(BankService::class)
+            ->shouldReceive('checkSignature')->once()->andReturn(true)
+            ->mock();
+
+        $interactor = new HandleBankCallInteractor($this->platformRepository, $this->transactionRepository, $bankServiceMock);
+
+        $platform = $this->createSamplePlatform();
+        $this->createSampleTransaction($transactionIdentifier, 50.00, $platform->getID());
+
+        $response = $interactor->execute(new HandleBankCallRequest([
+            'transactionIdentifier' => $transactionIdentifier,
+            'amount' => 50.00,
+            'parameters' => [
+                'paymentMeanType' => 'CB',
+                'paymentMeanBrand' => 'Mastercard',
+                'responseCode' => '05',
+            ]
+        ]));
+
+        $platform = $this->platformRepository->getByID($platform->getID());
+
+        $this->assertInstanceOf(HandleBankCallResponse::class, $response);
+        $this->assertFalse($response->success);
+        $this->assertAmountEquals(60.00, $platform->getAccountBalance());
+
+        $transaction = $this->transactionRepository->getByIdentifier($transactionIdentifier);
+        $this->assertEquals(Transaction::TRANSACTION_STATUS_ERROR, $transaction->getStatus());
+        $this->assertEquals('CB - Mastercard', $transaction->getPaymentMean());
+        $this->assertEquals('05', $transaction->getResponseCode());
     }
 
     public function testHandleBankCallWithNonExistingTransactionIdentifier()
@@ -86,6 +126,9 @@ class HandleBankCallInteractorTest extends ProjectsquareTestCase
         $response = $interactor->execute(new HandleBankCallRequest([
             'transactionIdentifier' => '123',
             'amount' => 50.00,
+            'parameters' => [
+                'responseCode' => '00',
+            ]
         ]));
 
         $this->assertInstanceOf(HandleBankCallResponse::class, $response);
@@ -106,6 +149,9 @@ class HandleBankCallInteractorTest extends ProjectsquareTestCase
         $response = $interactor->execute(new HandleBankCallRequest([
             'transactionIdentifier' => $transactionIdentifier,
             'amount' => 50.56,
+            'parameters' => [
+                'responseCode' => '00',
+            ]
         ]));
 
         $this->assertInstanceOf(HandleBankCallResponse::class, $response);
@@ -129,6 +175,9 @@ class HandleBankCallInteractorTest extends ProjectsquareTestCase
         $response = $interactor->execute(new HandleBankCallRequest([
             'transactionIdentifier' => $transactionIdentifier,
             'amount' => 50.00,
+            'parameters' => [
+                'responseCode' => '00',
+            ]
         ]));
 
         $this->assertInstanceOf(HandleBankCallResponse::class, $response);
