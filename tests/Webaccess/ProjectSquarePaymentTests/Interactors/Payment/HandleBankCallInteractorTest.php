@@ -59,6 +59,8 @@ class HandleBankCallInteractorTest extends ProjectsquareTestCase
             'transactionIdentifier' => $transactionIdentifier,
             'amount' => 50.00,
             'parameters' => [
+                'paymentMeanType' => 'CB',
+                'paymentMeanBrand' => 'Mastercard',
                 'responseCode' => '00',
             ]
         ]));
@@ -67,6 +69,8 @@ class HandleBankCallInteractorTest extends ProjectsquareTestCase
             'transactionIdentifier' => $transactionIdentifier,
             'amount' => 50.00,
             'parameters' => [
+                'paymentMeanType' => 'CB',
+                'paymentMeanBrand' => 'Mastercard',
                 'responseCode' => '00',
             ]
         ]));
@@ -127,6 +131,8 @@ class HandleBankCallInteractorTest extends ProjectsquareTestCase
             'transactionIdentifier' => '123',
             'amount' => 50.00,
             'parameters' => [
+                'paymentMeanType' => 'CB',
+                'paymentMeanBrand' => 'Mastercard',
                 'responseCode' => '00',
             ]
         ]));
@@ -150,6 +156,8 @@ class HandleBankCallInteractorTest extends ProjectsquareTestCase
             'transactionIdentifier' => $transactionIdentifier,
             'amount' => 50.56,
             'parameters' => [
+                'paymentMeanType' => 'CB',
+                'paymentMeanBrand' => 'Mastercard',
                 'responseCode' => '00',
             ]
         ]));
@@ -176,6 +184,8 @@ class HandleBankCallInteractorTest extends ProjectsquareTestCase
             'transactionIdentifier' => $transactionIdentifier,
             'amount' => 50.00,
             'parameters' => [
+                'paymentMeanType' => 'CB',
+                'paymentMeanBrand' => 'Mastercard',
                 'responseCode' => '00',
             ]
         ]));

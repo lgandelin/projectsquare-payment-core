@@ -143,5 +143,6 @@ class HandleBankCallInteractor
     {
         $transaction->setPaymentMean($request->parameters['paymentMeanType'] . ' - ' . $request->parameters['paymentMeanBrand']);
         $transaction->setResponseCode($request->parameters['responseCode']);
+        $this->transactionRepository->persist($transaction);
     }
 }
