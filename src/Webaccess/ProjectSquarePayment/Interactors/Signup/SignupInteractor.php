@@ -16,27 +16,27 @@ use Webaccess\ProjectSquarePayment\Responses\Administrators\CreateAdministratorR
 use Webaccess\ProjectSquarePayment\Responses\Infrastructure\CreateInfrastructureResponse;
 use Webaccess\ProjectSquarePayment\Responses\Platforms\CreatePlatformResponse;
 use Webaccess\ProjectSquarePayment\Responses\Signup\SignupResponse;
-use Webaccess\ProjectSquarePayment\Services\RemoteInfrastructureGenerator;
+use Webaccess\ProjectSquarePayment\Contracts\RemoteInfrastructureService;
 
 class SignupInteractor
 {
     private $platformRepository;
     private $administratorRepository;
     private $nodeRepository;
-    private $remoteInfrastructureGenerator;
+    private $remoteInfrastructureService;
 
     /**
      * @param PlatformRepository $platformRepository
      * @param AdministratorRepository $administratorRepository
      * @param NodeRepository $nodeRepository
-     * @param RemoteInfrastructureGenerator $remoteInfrastructureGenerator
+     * @param RemoteInfrastructureService $remoteInfrastructureService
      */
-    public function __construct(PlatformRepository $platformRepository, AdministratorRepository $administratorRepository, NodeRepository $nodeRepository, RemoteInfrastructureGenerator $remoteInfrastructureGenerator)
+    public function __construct(PlatformRepository $platformRepository, AdministratorRepository $administratorRepository, NodeRepository $nodeRepository, RemoteInfrastructureService $remoteInfrastructureService)
     {
         $this->platformRepository = $platformRepository;
         $this->nodeRepository = $nodeRepository;
         $this->administratorRepository = $administratorRepository;
-        $this->remoteInfrastructureGenerator = $remoteInfrastructureGenerator;
+        $this->remoteInfrastructureService = $remoteInfrastructureService;
     }
 
     /**
@@ -103,7 +103,7 @@ class SignupInteractor
      */
     private function createInfrastructure(SignupRequest $request, $platformID)
     {
-        return (new CreateInfrastructureInteractor($this->nodeRepository, $this->platformRepository, $this->remoteInfrastructureGenerator))->execute(new CreateInfrastructureRequest([
+        return (new CreateInfrastructureInteractor($this->nodeRepository, $this->platformRepository, $this->remoteInfrastructureService))->execute(new CreateInfrastructureRequest([
             'platformID' => $platformID,
             'slug' => $request->platformSlug,
             'administratorEmail' => $request->administratorEmail,

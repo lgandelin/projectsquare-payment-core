@@ -1,15 +1,13 @@
 <?php
 
-namespace Webaccess\ProjectSquarePayment\Repositories;
+namespace Webaccess\ProjectSquarePayment\Contracts;
 
 use Webaccess\ProjectSquarePayment\Entities\Platform;
 
-interface RemotePlatformRepository
+interface RemotePlatformService
 {
-    /**
-     * @param Platform $platform
-     * @return mixed
-     */
+    public function getPlatformURL(Platform $platform);
+
     public function getUsersLimit(Platform $platform);
 
     public function updateUsersLimit(Platform $platform, $usersCount);

@@ -2,7 +2,7 @@
 
 use Webaccess\ProjectSquarePayment\Entities\Platform;
 use Webaccess\ProjectSquarePayment\Interactors\Platforms\UpdatePlatformUsersCountInteractor;
-use Webaccess\ProjectSquarePayment\Repositories\RemotePlatformRepository;
+use Webaccess\ProjectSquarePayment\Contracts\RemotePlatformService;
 use Webaccess\ProjectSquarePayment\Requests\Platforms\UpdatePlatformUsersCountRequest;
 use Webaccess\ProjectSquarePayment\Responses\Platforms\UpdatePlatformUsersCountResponse;
 use Webaccess\ProjectSquarePaymentTests\ProjectsquareTestCase;
@@ -13,7 +13,7 @@ class UpdatePlatformUsersCountInteractorTest extends ProjectsquareTestCase
     {
         $platform = $this->createSamplePlatform();
 
-        $remotePlatformRepositoryMock = Mockery::mock(RemotePlatformRepository::class)
+        $remotePlatformRepositoryMock = Mockery::mock(RemotePlatformService::class)
             ->shouldReceive('getUsersLimit')->once()->andReturn(3)
             ->shouldReceive('updateUsersLimit')->once()->with(Mockery::type(Platform::class), 4)
             ->mock();
@@ -33,7 +33,7 @@ class UpdatePlatformUsersCountInteractorTest extends ProjectsquareTestCase
 
     public function testUpdatePlatformUsersCountWithoutPlatform()
     {
-        $remotePlatformRepositoryMock = Mockery::mock(RemotePlatformRepository::class)
+        $remotePlatformRepositoryMock = Mockery::mock(RemotePlatformService::class)
             ->shouldReceive('getUsersLimit')->never()
             ->shouldReceive('updateUsersLimit')->never()
             ->mock();
@@ -53,7 +53,7 @@ class UpdatePlatformUsersCountInteractorTest extends ProjectsquareTestCase
     {
         $platform = $this->createSamplePlatform();
 
-        $remotePlatformRepositoryMock = Mockery::mock(RemotePlatformRepository::class)
+        $remotePlatformRepositoryMock = Mockery::mock(RemotePlatformService::class)
             ->shouldReceive('getUsersLimit')->never()
             ->shouldReceive('updateUsersLimit')->never()
             ->mock();
@@ -76,7 +76,7 @@ class UpdatePlatformUsersCountInteractorTest extends ProjectsquareTestCase
     {
         $platform = $this->createSamplePlatform();
 
-        $remotePlatformRepositoryMock = Mockery::mock(RemotePlatformRepository::class)
+        $remotePlatformRepositoryMock = Mockery::mock(RemotePlatformService::class)
             ->shouldReceive('getUsersLimit')->once()->andReturn(3)
             ->shouldReceive('updateUsersLimit')->never()
             ->mock();
@@ -99,12 +99,12 @@ class UpdatePlatformUsersCountInteractorTest extends ProjectsquareTestCase
     {
         $platform = $this->createSamplePlatform();
 
-        $remotePlatformRepositoryMock = Mockery::mock(RemotePlatformRepository::class)
+        $remotePlatformServiceMock = Mockery::mock(RemotePlatformService::class)
             ->shouldReceive('getUsersLimit')->once()->andReturn(null)
             ->shouldReceive('updateUsersLimit')->never()
             ->mock();
 
-        $interactor = new UpdatePlatformUsersCountInteractor($this->platformRepository, $remotePlatformRepositoryMock);
+        $interactor = new UpdatePlatformUsersCountInteractor($this->platformRepository, $remotePlatformServiceMock);
 
         $response = $interactor->execute(new UpdatePlatformUsersCountRequest([
             'platformID' => $platform->getID(),

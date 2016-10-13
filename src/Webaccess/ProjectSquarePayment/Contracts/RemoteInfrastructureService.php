@@ -1,8 +1,8 @@
 <?php
 
-namespace Webaccess\ProjectSquarePayment\Services;
+namespace Webaccess\ProjectSquarePayment\Contracts;
 
-interface RemoteInfrastructureGenerator
+interface RemoteInfrastructureService
 {
     public function launchEnvCreation($nodeIdentifier, $slug, $administratorEmail, $usersLimit);
 

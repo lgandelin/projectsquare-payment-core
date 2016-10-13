@@ -1,6 +1,6 @@
 <?php
 
-namespace Webaccess\ProjectSquarePayment\Services;
+namespace Webaccess\ProjectSquarePayment\Contracts;
 
 interface BankService
 {

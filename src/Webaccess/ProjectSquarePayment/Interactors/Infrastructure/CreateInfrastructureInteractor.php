@@ -7,18 +7,18 @@ use Webaccess\ProjectSquarePayment\Repositories\NodeRepository;
 use Webaccess\ProjectSquarePayment\Repositories\PlatformRepository;
 use Webaccess\ProjectSquarePayment\Requests\Infrastructure\CreateInfrastructureRequest;
 use Webaccess\ProjectSquarePayment\Responses\Infrastructure\CreateInfrastructureResponse;
-use Webaccess\ProjectSquarePayment\Services\RemoteInfrastructureGenerator;
+use Webaccess\ProjectSquarePayment\Contracts\RemoteInfrastructureService;
 
 class CreateInfrastructureInteractor
 {
     private $nodeRepository;
-    private $remoteInfrastructureGenerator;
+    private $remoteInfrastructureService;
 
-    public function __construct(NodeRepository $nodeRepository, PlatformRepository $platformRepository, RemoteInfrastructureGenerator $remoteInfrastructureGenerator)
+    public function __construct(NodeRepository $nodeRepository, PlatformRepository $platformRepository, RemoteInfrastructureService $remoteInfrastructureService)
     {
         $this->nodeRepository = $nodeRepository;
         $this->platformRepository = $platformRepository;
-        $this->remoteInfrastructureGenerator = $remoteInfrastructureGenerator;
+        $this->remoteInfrastructureService = $remoteInfrastructureService;
     }
 
     public function execute(CreateInfrastructureRequest $request)
@@ -28,15 +28,15 @@ class CreateInfrastructureInteractor
 
         if (!$nodeIdentifier) {
             $nodeIdentifier = $this->createNewNode();
-            $this->remoteInfrastructureGenerator->launchEnvCreation($nodeIdentifier, $request->slug, $request->administratorEmail, $request->usersLimit);
+            $this->remoteInfrastructureService->launchEnvCreation($nodeIdentifier, $request->slug, $request->administratorEmail, $request->usersLimit);
         } else {
-            $this->remoteInfrastructureGenerator->launchAppCreation($nodeIdentifier, $request->slug, $request->administratorEmail, $request->usersLimit);
+            $this->remoteInfrastructureService->launchAppCreation($nodeIdentifier, $request->slug, $request->administratorEmail, $request->usersLimit);
             $this->nodeRepository->setNodeUnavailable($nodeIdentifier);
         }
         $this->platformRepository->updatePlatformNodeIdentifier($request->platformID, $nodeIdentifier);
 
         $nodeIdentifier = $this->createNewNode();
-        $this->remoteInfrastructureGenerator->launchNodeCreation($nodeIdentifier);
+        $this->remoteInfrastructureService->launchNodeCreation($nodeIdentifier);
 
         return ($errorCode === null) ? $this->createSuccessResponse() : $this->createErrorResponse($errorCode);
     }

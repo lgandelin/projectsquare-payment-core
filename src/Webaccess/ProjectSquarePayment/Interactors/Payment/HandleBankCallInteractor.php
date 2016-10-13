@@ -8,7 +8,7 @@ use Webaccess\ProjectSquarePayment\Repositories\TransactionRepository;
 use Webaccess\ProjectSquarePayment\Requests\Payment\FundPlatformAccountRequest;
 use Webaccess\ProjectSquarePayment\Requests\Payment\HandleBankCallRequest;
 use Webaccess\ProjectSquarePayment\Responses\Payment\HandleBankCallResponse;
-use Webaccess\ProjectSquarePayment\Services\BankService;
+use Webaccess\ProjectSquarePayment\Contracts\BankService;
 
 class HandleBankCallInteractor
 {

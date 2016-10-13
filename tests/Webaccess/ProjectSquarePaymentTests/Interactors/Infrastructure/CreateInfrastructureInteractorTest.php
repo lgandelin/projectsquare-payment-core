@@ -1,16 +1,16 @@
 <?php
 
+use Webaccess\ProjectSquarePayment\Contracts\RemoteInfrastructureService;
 use Webaccess\ProjectSquarePayment\Interactors\Infrastructure\CreateInfrastructureInteractor;
 use Webaccess\ProjectSquarePayment\Requests\Infrastructure\CreateInfrastructureRequest;
 use Webaccess\ProjectSquarePayment\Responses\Infrastructure\CreateInfrastructureResponse;
-use Webaccess\ProjectSquarePayment\Services\RemoteInfrastructureGenerator;
 use Webaccess\ProjectSquarePaymentTests\ProjectsquareTestCase;
 
 class CreateInfrastructureInteractorTest extends ProjectsquareTestCase
 {
     public function testCreateNewInfrastructure()
     {
-        $remoteInfrastructureGeneratorMock = Mockery::mock(RemoteInfrastructureGenerator::class)
+        $remoteInfrastructureGeneratorMock = Mockery::mock(RemoteInfrastructureService::class)
             ->shouldReceive('launchEnvCreation')->once()->with(Mockery::type('string'), 'webaccess', 'lgandelin@web-access.fr', 3)
             ->shouldReceive('launchNodeCreation')->once()->with(Mockery::type('string'))
             ->shouldReceive('launchAppCreation')->never()
@@ -33,7 +33,7 @@ class CreateInfrastructureInteractorTest extends ProjectsquareTestCase
     {
         $this->createSampleNode('availableNode', true);
 
-        $remoteInfrastructureGeneratorMock = Mockery::mock(RemoteInfrastructureGenerator::class)
+        $remoteInfrastructureGeneratorMock = Mockery::mock(RemoteInfrastructureService::class)
             ->shouldReceive('launchEnvCreation')->never()
             ->shouldReceive('launchNodeCreation')->once()->with(Mockery::type('string'))
             ->shouldReceive('launchAppCreation')->once()->with('availableNode', 'webaccess', 'lgandelin@web-access.fr', 3)

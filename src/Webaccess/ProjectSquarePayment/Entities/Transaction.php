@@ -15,6 +15,7 @@ class Transaction
     private $paymentMean;
     private $status;
     private $responseCode;
+    private $creationDate;
 
     public function getId()
     {
@@ -84,5 +85,15 @@ class Transaction
     public function setPlatformID($platformID)
     {
         $this->platformID = $platformID;
+    }
+
+    public function getCreationDate()
+    {
+        return $this->creationDate;
+    }
+
+    public function setCreationDate($creationDate)
+    {
+        $this->creationDate = $creationDate;
     }
 }

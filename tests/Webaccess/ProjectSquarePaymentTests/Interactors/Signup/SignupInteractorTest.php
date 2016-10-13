@@ -1,5 +1,6 @@
 <?php
 
+use Webaccess\ProjectSquarePayment\Contracts\RemoteInfrastructureService;
 use Webaccess\ProjectSquarePayment\Entities\Platform;
 use Webaccess\ProjectSquarePayment\Interactors\Signup\SignupInteractor;
 use Webaccess\ProjectSquarePayment\Requests\Signup\SignupRequest;
@@ -7,7 +8,6 @@ use Webaccess\ProjectSquarePayment\Responses\Administrators\CreateAdministratorR
 use Webaccess\ProjectSquarePayment\Responses\Platforms\CreatePlatformResponse;
 use Webaccess\ProjectSquarePayment\Responses\Signup\CheckPlatformSlugResponse;
 use Webaccess\ProjectSquarePayment\Responses\Signup\SignupResponse;
-use Webaccess\ProjectSquarePayment\Services\RemoteInfrastructureGenerator;
 use Webaccess\ProjectSquarePaymentTests\ProjectsquareTestCase;
 
 class SignupInteractorTest extends ProjectsquareTestCase
@@ -15,13 +15,13 @@ class SignupInteractorTest extends ProjectsquareTestCase
 
     public function testSignup()
     {
-        $remoteInfrastructureGeneratorMock = Mockery::mock(RemoteInfrastructureGenerator::class)
+        $remoteInfrastructureServiceMock = Mockery::mock(RemoteInfrastructureService::class)
             ->shouldReceive('launchEnvCreation')->once()->with(Mockery::type('string'), 'webaccess', 'lgandelin@web-access.fr', 3)
             ->shouldReceive('launchNodeCreation')->once()
             ->shouldReceive('launchAppCreation')->never()
             ->mock();
 
-        $interactor = new SignupInteractor($this->platformRepository, $this->administratorRepository, $this->nodeRepository, $remoteInfrastructureGeneratorMock);
+        $interactor = new SignupInteractor($this->platformRepository, $this->administratorRepository, $this->nodeRepository, $remoteInfrastructureServiceMock);
 
         $response = $interactor->execute(new SignupRequest([
             'platformName' => 'Webaccess',
@@ -61,7 +61,7 @@ class SignupInteractorTest extends ProjectsquareTestCase
 
     public function testSignupWithErrorWithPlatform()
     {
-        $remoteInfrastructureGeneratorMock = Mockery::mock(RemoteInfrastructureGenerator::class)
+        $remoteInfrastructureGeneratorMock = Mockery::mock(RemoteInfrastructureService::class)
             ->shouldReceive('launchEnvCreation')->never()
             ->shouldReceive('launchNodeCreation')->never()
             ->shouldReceive('launchAppCreation')->never()
@@ -90,7 +90,7 @@ class SignupInteractorTest extends ProjectsquareTestCase
 
     public function testSignupWithInvalidPlatformSlug()
     {
-        $remoteInfrastructureGeneratorMock = Mockery::mock(RemoteInfrastructureGenerator::class)
+        $remoteInfrastructureGeneratorMock = Mockery::mock(RemoteInfrastructureService::class)
             ->shouldReceive('launchEnvCreation')->never()
             ->shouldReceive('launchNodeCreation')->never()
             ->shouldReceive('launchAppCreation')->never()
@@ -120,7 +120,7 @@ class SignupInteractorTest extends ProjectsquareTestCase
 
     public function testSignupWithErrorWithAdministrator()
     {
-        $remoteInfrastructureGeneratorMock = Mockery::mock(RemoteInfrastructureGenerator::class)
+        $remoteInfrastructureGeneratorMock = Mockery::mock(RemoteInfrastructureService::class)
             ->shouldReceive('launchEnvCreation')->never()
             ->shouldReceive('launchNodeCreation')->never()
             ->shouldReceive('launchAppCreation')->never()

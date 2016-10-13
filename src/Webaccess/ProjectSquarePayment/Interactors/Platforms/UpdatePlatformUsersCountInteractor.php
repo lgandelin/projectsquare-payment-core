@@ -2,24 +2,24 @@
 
 namespace Webaccess\ProjectSquarePayment\Interactors\Platforms;
 
+use Webaccess\ProjectSquarePayment\Contracts\RemotePlatformService;
 use Webaccess\ProjectSquarePayment\Repositories\PlatformRepository;
-use Webaccess\ProjectSquarePayment\Repositories\RemotePlatformRepository;
 use Webaccess\ProjectSquarePayment\Requests\Platforms\UpdatePlatformUsersCountRequest;
 use Webaccess\ProjectSquarePayment\Responses\Platforms\UpdatePlatformUsersCountResponse;
 
 class UpdatePlatformUsersCountInteractor
 {
     private $platformRepository;
-    private $remotePlateformRepository;
+    private $remotePlatformService;
 
     /**
      * @param PlatformRepository $platformRepository
-     * @param RemotePlatformRepository $remotePlatformRepository
+     * @param RemotePlatformService $remotePlatformService
      */
-    public function __construct(PlatformRepository $platformRepository, RemotePlatformRepository $remotePlatformRepository)
+    public function __construct(PlatformRepository $platformRepository, RemotePlatformService $remotePlatformService)
     {
         $this->platformRepository = $platformRepository;
-        $this->remotePlateformRepository = $remotePlatformRepository;
+        $this->remotePlatformService = $remotePlatformService;
     }
 
     /**
@@ -37,7 +37,7 @@ class UpdatePlatformUsersCountInteractor
 
         if ($errorCode !== null) return $this->createErrorResponse($errorCode);
 
-        $remotePlatformUsersCount = $this->remotePlateformRepository->getUsersLimit($platform);
+        $remotePlatformUsersCount = $this->remotePlatformService->getUsersLimit($platform);
 
         if (!$this->isActualUsersCountValid($remotePlatformUsersCount))
             $errorCode = UpdatePlatformUsersCountResponse::INVALID_ACTUAL_USERS_COUNT;
@@ -46,7 +46,7 @@ class UpdatePlatformUsersCountInteractor
         } else {
             $platform->setUsersCount($request->usersCount);
             $this->platformRepository->persist($platform);
-            $this->remotePlateformRepository->updateUsersLimit($platform, $request->usersCount);
+            $this->remotePlatformService->updateUsersLimit($platform, $request->usersCount);
         }
 
         return ($errorCode === null) ? $this->createSuccessResponse() : $this->createErrorResponse($errorCode);
