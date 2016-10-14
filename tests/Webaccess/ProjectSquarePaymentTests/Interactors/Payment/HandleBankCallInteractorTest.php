@@ -12,23 +12,26 @@ class HandleBankCallInteractorTest extends ProjectsquareTestCase
     public function testHandleBankCall()
     {
         $transactionIdentifier = 'a5eb87x';
+        $amount = 50.00;
         $bankServiceMock = Mockery::mock(BankService::class)
             ->shouldReceive('checkSignature')->once()->andReturn(true)
+            ->shouldReceive('extractParametersFromData')->once()->andReturn([
+                'transactionReference' => $transactionIdentifier,
+                'amount' => $amount * 100,
+                'responseCode' => '00',
+                'paymentMeanType' => 'CB',
+                'paymentMeanBrand' => 'Mastercard',
+            ])
             ->mock();
 
         $interactor = new HandleBankCallInteractor($this->platformRepository, $this->transactionRepository, $bankServiceMock);
 
         $platform = $this->createSamplePlatform();
-        $this->createSampleTransaction($transactionIdentifier, 50.00, $platform->getID());
+        $this->createSampleTransaction($transactionIdentifier, $amount, $platform->getID());
 
         $response = $interactor->execute(new HandleBankCallRequest([
-            'transactionIdentifier' => $transactionIdentifier,
-            'amount' => 50.00,
-            'parameters' => [
-                'paymentMeanType' => 'CB',
-                'paymentMeanBrand' => 'Mastercard',
-                'responseCode' => '00',
-            ]
+            'data' => 'data',
+            'seal' => 'seal',
         ]));
 
         $platform = $this->platformRepository->getByID($platform->getID());
@@ -46,33 +49,31 @@ class HandleBankCallInteractorTest extends ProjectsquareTestCase
     public function testHandleBankTwoCallsForSameTransaction()
     {
         $transactionIdentifier = 'a5eb87x';
+        $amount = 50.00;
         $bankServiceMock = Mockery::mock(BankService::class)
             ->shouldReceive('checkSignature')->times(2)->andReturn(true)
+            ->shouldReceive('extractParametersFromData')->times(2)->andReturn([
+                'transactionReference' => $transactionIdentifier,
+                'amount' => $amount * 100,
+                'responseCode' => '00',
+                'paymentMeanType' => 'CB',
+                'paymentMeanBrand' => 'Mastercard',
+            ])
             ->mock();
 
         $interactor = new HandleBankCallInteractor($this->platformRepository, $this->transactionRepository, $bankServiceMock);
 
         $platform = $this->createSamplePlatform();
-        $this->createSampleTransaction($transactionIdentifier, 50.00, $platform->getID());
+        $this->createSampleTransaction($transactionIdentifier, $amount, $platform->getID());
 
         $interactor->execute(new HandleBankCallRequest([
-            'transactionIdentifier' => $transactionIdentifier,
-            'amount' => 50.00,
-            'parameters' => [
-                'paymentMeanType' => 'CB',
-                'paymentMeanBrand' => 'Mastercard',
-                'responseCode' => '00',
-            ]
+            'data' => 'data',
+            'seal' => 'seal',
         ]));
 
         $response = $interactor->execute(new HandleBankCallRequest([
-            'transactionIdentifier' => $transactionIdentifier,
-            'amount' => 50.00,
-            'parameters' => [
-                'paymentMeanType' => 'CB',
-                'paymentMeanBrand' => 'Mastercard',
-                'responseCode' => '00',
-            ]
+            'data' => 'data',
+            'seal' => 'seal',
         ]));
 
         $platform = $this->platformRepository->getByID($platform->getID());
@@ -88,23 +89,26 @@ class HandleBankCallInteractorTest extends ProjectsquareTestCase
     public function testHandleBankCallWithInvalidResponseCode()
     {
         $transactionIdentifier = 'a5eb87x';
+        $amount = 50.00;
         $bankServiceMock = Mockery::mock(BankService::class)
             ->shouldReceive('checkSignature')->once()->andReturn(true)
+            ->shouldReceive('extractParametersFromData')->once()->andReturn([
+                'transactionReference' => $transactionIdentifier,
+                'amount' => $amount * 100,
+                'responseCode' => '05',
+                'paymentMeanType' => 'CB',
+                'paymentMeanBrand' => 'Mastercard',
+            ])
             ->mock();
 
         $interactor = new HandleBankCallInteractor($this->platformRepository, $this->transactionRepository, $bankServiceMock);
 
         $platform = $this->createSamplePlatform();
-        $this->createSampleTransaction($transactionIdentifier, 50.00, $platform->getID());
+        $this->createSampleTransaction($transactionIdentifier, $amount, $platform->getID());
 
         $response = $interactor->execute(new HandleBankCallRequest([
-            'transactionIdentifier' => $transactionIdentifier,
-            'amount' => 50.00,
-            'parameters' => [
-                'paymentMeanType' => 'CB',
-                'paymentMeanBrand' => 'Mastercard',
-                'responseCode' => '05',
-            ]
+            'data' => 'data',
+            'seal' => 'seal',
         ]));
 
         $platform = $this->platformRepository->getByID($platform->getID());
@@ -121,20 +125,24 @@ class HandleBankCallInteractorTest extends ProjectsquareTestCase
 
     public function testHandleBankCallWithNonExistingTransactionIdentifier()
     {
+        $transactionIdentifier = '123';
+        $amount = 50.00;
         $bankServiceMock = Mockery::mock(BankService::class)
             ->shouldReceive('checkSignature')->never()
+            ->shouldReceive('extractParametersFromData')->once()->andReturn([
+                'transactionReference' => $transactionIdentifier,
+                'amount' => $amount * 100,
+                'responseCode' => '00',
+                'paymentMeanType' => 'CB',
+                'paymentMeanBrand' => 'Mastercard',
+            ])
             ->mock();
 
         $interactor = new HandleBankCallInteractor($this->platformRepository, $this->transactionRepository, $bankServiceMock);
 
         $response = $interactor->execute(new HandleBankCallRequest([
-            'transactionIdentifier' => '123',
-            'amount' => 50.00,
-            'parameters' => [
-                'paymentMeanType' => 'CB',
-                'paymentMeanBrand' => 'Mastercard',
-                'responseCode' => '00',
-            ]
+            'data' => 'data',
+            'seal' => 'seal',
         ]));
 
         $this->assertInstanceOf(HandleBankCallResponse::class, $response);
@@ -145,21 +153,26 @@ class HandleBankCallInteractorTest extends ProjectsquareTestCase
     public function testHandleBankCallWithInvalidAmount()
     {
         $transactionIdentifier = 'a5eb87x';
+        $amount = 50.00;
         $bankServiceMock = Mockery::mock(BankService::class)
-            ->shouldReceive('checkSignature')->never()
+            ->shouldReceive('checkSignature')->never()->andReturn(true)
+            ->shouldReceive('extractParametersFromData')->once()->andReturn([
+                'transactionReference' => $transactionIdentifier,
+                'amount' => 50.56 * 100,
+                'responseCode' => '05',
+                'paymentMeanType' => 'CB',
+                'paymentMeanBrand' => 'Mastercard',
+            ])
             ->mock();
 
         $interactor = new HandleBankCallInteractor($this->platformRepository, $this->transactionRepository, $bankServiceMock);
 
-        $this->createSampleTransaction($transactionIdentifier, 50.00);
+        $platform = $this->createSamplePlatform();
+        $this->createSampleTransaction($transactionIdentifier, $amount, $platform->getID());
+
         $response = $interactor->execute(new HandleBankCallRequest([
-            'transactionIdentifier' => $transactionIdentifier,
-            'amount' => 50.56,
-            'parameters' => [
-                'paymentMeanType' => 'CB',
-                'paymentMeanBrand' => 'Mastercard',
-                'responseCode' => '00',
-            ]
+            'data' => 'data',
+            'seal' => 'seal',
         ]));
 
         $this->assertInstanceOf(HandleBankCallResponse::class, $response);
@@ -173,21 +186,26 @@ class HandleBankCallInteractorTest extends ProjectsquareTestCase
     public function testHandleBankCallWithInvalidSignature()
     {
         $transactionIdentifier = 'a5eb87x';
+        $amount = 50.00;
         $bankServiceMock = Mockery::mock(BankService::class)
             ->shouldReceive('checkSignature')->once()->andReturn(false)
+            ->shouldReceive('extractParametersFromData')->once()->andReturn([
+                'transactionReference' => $transactionIdentifier,
+                'amount' => $amount * 100,
+                'responseCode' => '00',
+                'paymentMeanType' => 'CB',
+                'paymentMeanBrand' => 'Mastercard',
+            ])
             ->mock();
 
         $interactor = new HandleBankCallInteractor($this->platformRepository, $this->transactionRepository, $bankServiceMock);
 
-        $this->createSampleTransaction($transactionIdentifier, 50.00);
+        $platform = $this->createSamplePlatform();
+        $this->createSampleTransaction($transactionIdentifier, $amount, $platform->getID());
+
         $response = $interactor->execute(new HandleBankCallRequest([
-            'transactionIdentifier' => $transactionIdentifier,
-            'amount' => 50.00,
-            'parameters' => [
-                'paymentMeanType' => 'CB',
-                'paymentMeanBrand' => 'Mastercard',
-                'responseCode' => '00',
-            ]
+            'data' => 'data',
+            'seal' => 'seal',
         ]));
 
         $this->assertInstanceOf(HandleBankCallResponse::class, $response);
