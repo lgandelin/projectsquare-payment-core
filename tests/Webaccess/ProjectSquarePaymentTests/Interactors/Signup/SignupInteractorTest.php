@@ -21,7 +21,7 @@ class SignupInteractorTest extends ProjectsquareTestCase
             ->shouldReceive('launchAppCreation')->never()
             ->mock();
 
-        $interactor = new SignupInteractor($this->platformRepository, $this->administratorRepository, $this->nodeRepository, $remoteInfrastructureServiceMock);
+        $interactor = new SignupInteractor($this->platformRepository, $this->administratorRepository, $this->nodeRepository, $remoteInfrastructureServiceMock, $this->getLoggerMock());
 
         $response = $interactor->execute(new SignupRequest([
             'platformName' => 'Webaccess',
@@ -67,7 +67,7 @@ class SignupInteractorTest extends ProjectsquareTestCase
             ->shouldReceive('launchAppCreation')->never()
             ->mock();
 
-        $interactor = new SignupInteractor($this->platformRepository, $this->administratorRepository, $this->nodeRepository, $remoteInfrastructureGeneratorMock);
+        $interactor = new SignupInteractor($this->platformRepository, $this->administratorRepository, $this->nodeRepository, $remoteInfrastructureGeneratorMock, $this->getLoggerMock());
 
         $response = $interactor->execute(new SignupRequest([
             'platformName' => 'Webaccess',
@@ -96,7 +96,7 @@ class SignupInteractorTest extends ProjectsquareTestCase
             ->shouldReceive('launchAppCreation')->never()
             ->mock();
 
-        $interactor = new SignupInteractor($this->platformRepository, $this->administratorRepository, $this->nodeRepository, $remoteInfrastructureGeneratorMock);
+        $interactor = new SignupInteractor($this->platformRepository, $this->administratorRepository, $this->nodeRepository, $remoteInfrastructureGeneratorMock, $this->getLoggerMock());
 
         $response = $interactor->execute(new SignupRequest([
             'platformName' => 'Webaccess',
@@ -126,7 +126,7 @@ class SignupInteractorTest extends ProjectsquareTestCase
             ->shouldReceive('launchAppCreation')->never()
             ->mock();
 
-        $interactor = new SignupInteractor($this->platformRepository, $this->administratorRepository, $this->nodeRepository, $remoteInfrastructureGeneratorMock);
+        $interactor = new SignupInteractor($this->platformRepository, $this->administratorRepository, $this->nodeRepository, $remoteInfrastructureGeneratorMock, $this->getLoggerMock());
 
         $response = $interactor->execute(new SignupRequest([
             'platformName' => 'Webaccess',

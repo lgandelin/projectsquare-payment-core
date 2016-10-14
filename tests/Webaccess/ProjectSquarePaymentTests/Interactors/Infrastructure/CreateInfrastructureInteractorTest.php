@@ -16,7 +16,7 @@ class CreateInfrastructureInteractorTest extends ProjectsquareTestCase
             ->shouldReceive('launchAppCreation')->never()
             ->mock();
 
-        $interactor = new CreateInfrastructureInteractor($this->nodeRepository, $this->platformRepository, $remoteInfrastructureGeneratorMock);
+        $interactor = new CreateInfrastructureInteractor($this->nodeRepository, $this->platformRepository, $remoteInfrastructureGeneratorMock, $this->getLoggerMock());
 
         $response = $interactor->execute(new CreateInfrastructureRequest([
             'slug' => 'webaccess',
@@ -39,7 +39,7 @@ class CreateInfrastructureInteractorTest extends ProjectsquareTestCase
             ->shouldReceive('launchAppCreation')->once()->with('availableNode', 'webaccess', 'lgandelin@web-access.fr', 3)
             ->mock();
 
-        $interactor = new CreateInfrastructureInteractor($this->nodeRepository, $this->platformRepository, $remoteInfrastructureGeneratorMock);
+        $interactor = new CreateInfrastructureInteractor($this->nodeRepository, $this->platformRepository, $remoteInfrastructureGeneratorMock, $this->getLoggerMock());
 
         $response = $interactor->execute(new CreateInfrastructureRequest([
             'slug' => 'webaccess',

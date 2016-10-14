@@ -2,6 +2,7 @@
 
 namespace Webaccess\ProjectSquarePayment\Interactors\Infrastructure;
 
+use Webaccess\ProjectSquarePayment\Contracts\Logger;
 use Webaccess\ProjectSquarePayment\Entities\Node;
 use Webaccess\ProjectSquarePayment\Repositories\NodeRepository;
 use Webaccess\ProjectSquarePayment\Repositories\PlatformRepository;
@@ -12,17 +13,32 @@ use Webaccess\ProjectSquarePayment\Contracts\RemoteInfrastructureService;
 class CreateInfrastructureInteractor
 {
     private $nodeRepository;
+    private $platformRepository;
     private $remoteInfrastructureService;
+    private $logger;
 
-    public function __construct(NodeRepository $nodeRepository, PlatformRepository $platformRepository, RemoteInfrastructureService $remoteInfrastructureService)
+    /**
+     * @param NodeRepository $nodeRepository
+     * @param PlatformRepository $platformRepository
+     * @param RemoteInfrastructureService $remoteInfrastructureService
+     * @param Logger $logger
+     */
+    public function __construct(NodeRepository $nodeRepository, PlatformRepository $platformRepository, RemoteInfrastructureService $remoteInfrastructureService, Logger $logger)
     {
         $this->nodeRepository = $nodeRepository;
         $this->platformRepository = $platformRepository;
         $this->remoteInfrastructureService = $remoteInfrastructureService;
+        $this->logger = $logger;
     }
 
+    /**
+     * @param CreateInfrastructureRequest $request
+     * @return CreateInfrastructureResponse
+     */
     public function execute(CreateInfrastructureRequest $request)
     {
+        $this->logger->logRequest(self::class, $request);
+
         $errorCode = null;
         $nodeIdentifier = $this->nodeRepository->getAvailableNodeIdentifier();
 
@@ -38,7 +54,11 @@ class CreateInfrastructureInteractor
         $nodeIdentifier = $this->createNewNode();
         $this->remoteInfrastructureService->launchNodeCreation($nodeIdentifier);
 
-        return ($errorCode === null) ? $this->createSuccessResponse() : $this->createErrorResponse($errorCode);
+        $response = ($errorCode === null) ? $this->createSuccessResponse() : $this->createErrorResponse($errorCode);
+
+        $this->logger->logResponse(self::class, $response);
+
+        return $response;
     }
 
     /**

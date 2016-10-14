@@ -2,6 +2,8 @@
 
 namespace Webaccess\ProjectSquarePayment\Interactors\Signup;
 
+use Webaccess\ProjectSquarePayment\Contracts\Logger;
+use Webaccess\ProjectSquarePayment\Contracts\RemoteInfrastructureService;
 use Webaccess\ProjectSquarePayment\Interactors\Administrators\CreateAdministratorInteractor;
 use Webaccess\ProjectSquarePayment\Interactors\Infrastructure\CreateInfrastructureInteractor;
 use Webaccess\ProjectSquarePayment\Interactors\Platforms\CreatePlatformInteractor;
@@ -16,7 +18,6 @@ use Webaccess\ProjectSquarePayment\Responses\Administrators\CreateAdministratorR
 use Webaccess\ProjectSquarePayment\Responses\Infrastructure\CreateInfrastructureResponse;
 use Webaccess\ProjectSquarePayment\Responses\Platforms\CreatePlatformResponse;
 use Webaccess\ProjectSquarePayment\Responses\Signup\SignupResponse;
-use Webaccess\ProjectSquarePayment\Contracts\RemoteInfrastructureService;
 
 class SignupInteractor
 {
@@ -24,19 +25,22 @@ class SignupInteractor
     private $administratorRepository;
     private $nodeRepository;
     private $remoteInfrastructureService;
+    private $logger;
 
     /**
      * @param PlatformRepository $platformRepository
      * @param AdministratorRepository $administratorRepository
      * @param NodeRepository $nodeRepository
      * @param RemoteInfrastructureService $remoteInfrastructureService
+     * @param Logger $logger
      */
-    public function __construct(PlatformRepository $platformRepository, AdministratorRepository $administratorRepository, NodeRepository $nodeRepository, RemoteInfrastructureService $remoteInfrastructureService)
+    public function __construct(PlatformRepository $platformRepository, AdministratorRepository $administratorRepository, NodeRepository $nodeRepository, RemoteInfrastructureService $remoteInfrastructureService, Logger $logger)
     {
         $this->platformRepository = $platformRepository;
         $this->nodeRepository = $nodeRepository;
         $this->administratorRepository = $administratorRepository;
         $this->remoteInfrastructureService = $remoteInfrastructureService;
+        $this->logger = $logger;
     }
 
     /**
@@ -45,6 +49,8 @@ class SignupInteractor
      */
     public function execute(SignupRequest $request)
     {
+        $this->logger->logRequest(self::class, $request);
+
         $responsePlatform = $this->createPlatform($request);
 
         if (!$responsePlatform->success)
@@ -59,7 +65,11 @@ class SignupInteractor
 
         $this->createInfrastructure($request, $responsePlatform->platformID);
 
-        return $this->createSuccessResponse($responsePlatform->platformID, $responseAdministrator->administratorID);
+        $response = $this->createSuccessResponse($responsePlatform->platformID, $responseAdministrator->administratorID);
+
+        $this->logger->logResponse(self::class, $response);
+
+        return $response;
     }
 
     /**
@@ -68,7 +78,7 @@ class SignupInteractor
      */
     private function createPlatform(SignupRequest $request)
     {
-        return (new CreatePlatformInteractor($this->platformRepository))->execute(new CreatePlatformRequest([
+        return (new CreatePlatformInteractor($this->platformRepository, $this->logger))->execute(new CreatePlatformRequest([
             'name' => $request->platformName,
             'slug' => $request->platformSlug,
             'usersCount' => $request->platformUsersCount,
@@ -84,7 +94,7 @@ class SignupInteractor
      */
     private function createAdministrator(SignupRequest $request, $platformID)
     {
-        return (new CreateAdministratorInteractor($this->administratorRepository))->execute(new CreateAdministratorRequest([
+        return (new CreateAdministratorInteractor($this->administratorRepository, $this->logger))->execute(new CreateAdministratorRequest([
             'email' => $request->administratorEmail,
             'password' => $request->administratorPassword,
             'lastName' => $request->administratorLastName,
@@ -103,7 +113,7 @@ class SignupInteractor
      */
     private function createInfrastructure(SignupRequest $request, $platformID)
     {
-        return (new CreateInfrastructureInteractor($this->nodeRepository, $this->platformRepository, $this->remoteInfrastructureService))->execute(new CreateInfrastructureRequest([
+        return (new CreateInfrastructureInteractor($this->nodeRepository, $this->platformRepository, $this->remoteInfrastructureService, $this->logger))->execute(new CreateInfrastructureRequest([
             'platformID' => $platformID,
             'slug' => $request->platformSlug,
             'administratorEmail' => $request->administratorEmail,

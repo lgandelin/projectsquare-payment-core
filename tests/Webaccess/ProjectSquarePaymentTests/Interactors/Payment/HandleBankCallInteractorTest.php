@@ -24,7 +24,7 @@ class HandleBankCallInteractorTest extends ProjectsquareTestCase
             ])
             ->mock();
 
-        $interactor = new HandleBankCallInteractor($this->platformRepository, $this->transactionRepository, $bankServiceMock);
+        $interactor = new HandleBankCallInteractor($this->platformRepository, $this->transactionRepository, $bankServiceMock, $this->getLoggerMock());
 
         $platform = $this->createSamplePlatform();
         $this->createSampleTransaction($transactionIdentifier, $amount, $platform->getID());
@@ -61,7 +61,7 @@ class HandleBankCallInteractorTest extends ProjectsquareTestCase
             ])
             ->mock();
 
-        $interactor = new HandleBankCallInteractor($this->platformRepository, $this->transactionRepository, $bankServiceMock);
+        $interactor = new HandleBankCallInteractor($this->platformRepository, $this->transactionRepository, $bankServiceMock, $this->getLoggerMock());
 
         $platform = $this->createSamplePlatform();
         $this->createSampleTransaction($transactionIdentifier, $amount, $platform->getID());
@@ -101,7 +101,7 @@ class HandleBankCallInteractorTest extends ProjectsquareTestCase
             ])
             ->mock();
 
-        $interactor = new HandleBankCallInteractor($this->platformRepository, $this->transactionRepository, $bankServiceMock);
+        $interactor = new HandleBankCallInteractor($this->platformRepository, $this->transactionRepository, $bankServiceMock, $this->getLoggerMock());
 
         $platform = $this->createSamplePlatform();
         $this->createSampleTransaction($transactionIdentifier, $amount, $platform->getID());
@@ -138,7 +138,7 @@ class HandleBankCallInteractorTest extends ProjectsquareTestCase
             ])
             ->mock();
 
-        $interactor = new HandleBankCallInteractor($this->platformRepository, $this->transactionRepository, $bankServiceMock);
+        $interactor = new HandleBankCallInteractor($this->platformRepository, $this->transactionRepository, $bankServiceMock, $this->getLoggerMock());
 
         $response = $interactor->execute(new HandleBankCallRequest([
             'data' => 'data',
@@ -165,7 +165,7 @@ class HandleBankCallInteractorTest extends ProjectsquareTestCase
             ])
             ->mock();
 
-        $interactor = new HandleBankCallInteractor($this->platformRepository, $this->transactionRepository, $bankServiceMock);
+        $interactor = new HandleBankCallInteractor($this->platformRepository, $this->transactionRepository, $bankServiceMock, $this->getLoggerMock());
 
         $platform = $this->createSamplePlatform();
         $this->createSampleTransaction($transactionIdentifier, $amount, $platform->getID());
@@ -198,7 +198,7 @@ class HandleBankCallInteractorTest extends ProjectsquareTestCase
             ])
             ->mock();
 
-        $interactor = new HandleBankCallInteractor($this->platformRepository, $this->transactionRepository, $bankServiceMock);
+        $interactor = new HandleBankCallInteractor($this->platformRepository, $this->transactionRepository, $bankServiceMock, $this->getLoggerMock());
 
         $platform = $this->createSamplePlatform();
         $this->createSampleTransaction($transactionIdentifier, $amount, $platform->getID());

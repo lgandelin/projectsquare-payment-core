@@ -3,6 +3,7 @@
 namespace Webaccess\ProjectSquarePayment\Interactors\Payment;
 
 use Webaccess\ProjectSquarePayment\Contracts\BankService;
+use Webaccess\ProjectSquarePayment\Contracts\Logger;
 use Webaccess\ProjectSquarePayment\Entities\Transaction;
 use Webaccess\ProjectSquarePayment\Repositories\PlatformRepository;
 use Webaccess\ProjectSquarePayment\Repositories\TransactionRepository;
@@ -14,21 +15,30 @@ class InitTransactionInteractor
     private $platformRepository;
     private $transactionRepository;
     private $bankService;
+    private $logger;
 
     /**
      * @param PlatformRepository $platformRepository
      * @param TransactionRepository $transactionRepository
      * @param BankService $bankService
+     * @param Logger $logger
      */
-    public function __construct(PlatformRepository $platformRepository, TransactionRepository $transactionRepository, BankService $bankService)
+    public function __construct(PlatformRepository $platformRepository, TransactionRepository $transactionRepository, BankService $bankService, Logger $logger)
     {
         $this->platformRepository = $platformRepository;
         $this->transactionRepository = $transactionRepository;
         $this->bankService = $bankService;
+        $this->logger = $logger;
     }
 
+    /**
+     * @param InitTransactionRequest $request
+     * @return InitTransactionResponse
+     */
     public function execute(InitTransactionRequest $request)
     {
+        $this->logger->logRequest(self::class, $request);
+
         $errorCode = null;
 
         if (!$this->checkPlatform($request->platformID))
@@ -40,7 +50,11 @@ class InitTransactionInteractor
             list($data, $seal) = $this->bankService-> generateFormFields($transactionIdentifier, $request->amount);
         }
 
-        return ($errorCode === null) ? $this->createSuccessResponse($transactionIdentifier, $data, $seal) : $this->createErrorResponse($errorCode);
+        $response = ($errorCode === null) ? $this->createSuccessResponse($transactionIdentifier, $data, $seal) : $this->createErrorResponse($errorCode);
+
+        $this->logger->logResponse(self::class, $response);
+
+        return $response;
     }
 
     /**

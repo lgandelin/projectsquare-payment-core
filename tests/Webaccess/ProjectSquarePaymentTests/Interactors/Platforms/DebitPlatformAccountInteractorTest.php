@@ -10,7 +10,7 @@ class DebitPlatformAccountBalanceInteractorTest extends ProjectsquareTestCase
     public function __construct()
     {
         parent::__construct();
-        $this->interactor = new DebitPlatformAccountInteractor($this->platformRepository);
+        $this->interactor = new DebitPlatformAccountInteractor($this->platformRepository, $this->getLoggerMock());
     }
 
     public function testDebitPlatformAccount()

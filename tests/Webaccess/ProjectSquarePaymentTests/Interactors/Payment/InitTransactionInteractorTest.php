@@ -16,7 +16,7 @@ class InitTransactionInteractorTest extends ProjectsquareTestCase
         $bankServiceMock = Mockery::mock(BankService::class)
             ->shouldReceive('generateFormFields')->once()->with(Mockery::type('string'), $amount)->andReturn(['data', 'seal'])
             ->mock();
-        $interactor = new InitTransactionInteractor($this->platformRepository, $this->transactionRepository, $bankServiceMock);
+        $interactor = new InitTransactionInteractor($this->platformRepository, $this->transactionRepository, $bankServiceMock, $this->getLoggerMock());
         $response = $interactor->execute(new InitTransactionRequest([
             'platformID' => $platform->getID(),
             'amount' => $amount,
@@ -40,7 +40,7 @@ class InitTransactionInteractorTest extends ProjectsquareTestCase
         $bankServiceMock = Mockery::mock(BankService::class)
             ->shouldReceive('generateFormFields')->never()
             ->mock();
-        $interactor = new InitTransactionInteractor($this->platformRepository, $this->transactionRepository, $bankServiceMock);
+        $interactor = new InitTransactionInteractor($this->platformRepository, $this->transactionRepository, $bankServiceMock, $this->getLoggerMock());
         $response = $interactor->execute(new InitTransactionRequest([
             'platformID' => 2,
             'amount' => 56.00,
@@ -58,7 +58,7 @@ class InitTransactionInteractorTest extends ProjectsquareTestCase
             ->shouldReceive('generateFormFields')->never()
             ->mock();
         $platform = $this->createSamplePlatform();
-        $interactor = new InitTransactionInteractor($this->platformRepository, $this->transactionRepository, $bankServiceMock);
+        $interactor = new InitTransactionInteractor($this->platformRepository, $this->transactionRepository, $bankServiceMock, $this->getLoggerMock());
         $response = $interactor->execute(new InitTransactionRequest([
             'platformID' => $platform->getID(),
             'amount' => -200.00,

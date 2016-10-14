@@ -2,6 +2,7 @@
 
 namespace Webaccess\ProjectSquarePayment\Interactors\Platforms;
 
+use Webaccess\ProjectSquarePayment\Contracts\Logger;
 use Webaccess\ProjectSquarePayment\Contracts\RemotePlatformService;
 use Webaccess\ProjectSquarePayment\Repositories\PlatformRepository;
 use Webaccess\ProjectSquarePayment\Requests\Platforms\UpdatePlatformUsersCountRequest;
@@ -11,15 +12,18 @@ class UpdatePlatformUsersCountInteractor
 {
     private $platformRepository;
     private $remotePlatformService;
+    private $logger;
 
     /**
      * @param PlatformRepository $platformRepository
      * @param RemotePlatformService $remotePlatformService
+     * @param Logger $logger
      */
-    public function __construct(PlatformRepository $platformRepository, RemotePlatformService $remotePlatformService)
+    public function __construct(PlatformRepository $platformRepository, RemotePlatformService $remotePlatformService, Logger $logger)
     {
         $this->platformRepository = $platformRepository;
         $this->remotePlatformService = $remotePlatformService;
+        $this->logger = $logger;
     }
 
     /**
@@ -28,6 +32,8 @@ class UpdatePlatformUsersCountInteractor
      */
     public function execute(UpdatePlatformUsersCountRequest $request)
     {
+        $this->logger->logRequest(self::class, $request);
+
         $errorCode = null;
 
         if (!$platform = $this->platformRepository->getByID($request->platformID))
@@ -49,7 +55,11 @@ class UpdatePlatformUsersCountInteractor
             $this->remotePlatformService->updateUsersLimit($platform, $request->usersCount);
         }
 
-        return ($errorCode === null) ? $this->createSuccessResponse() : $this->createErrorResponse($errorCode);
+        $response = ($errorCode === null) ? $this->createSuccessResponse() : $this->createErrorResponse($errorCode);
+
+        $this->logger->logResponse(self::class, $response);
+
+        return $response;
     }
 
     /**

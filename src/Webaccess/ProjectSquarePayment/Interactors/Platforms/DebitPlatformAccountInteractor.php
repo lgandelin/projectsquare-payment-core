@@ -2,6 +2,7 @@
 
 namespace Webaccess\ProjectSquarePayment\Interactors\Platforms;
 
+use Webaccess\ProjectSquarePayment\Contracts\Logger;
 use Webaccess\ProjectSquarePayment\Repositories\PlatformRepository;
 use Webaccess\ProjectSquarePayment\Requests\Platforms\DebitPlatformAccountRequest;
 use Webaccess\ProjectSquarePayment\Responses\Platforms\DebitPlatformAccountResponse;
@@ -9,23 +10,32 @@ use Webaccess\ProjectSquarePayment\Responses\Platforms\DebitPlatformAccountRespo
 class DebitPlatformAccountInteractor
 {
     private $platformRepository;
+    private $logger;
 
     /**
      * @param PlatformRepository $platformRepository
+     * @param Logger $logger
      */
-    public function __construct(PlatformRepository $platformRepository)
+    public function __construct(PlatformRepository $platformRepository, Logger $logger)
     {
         $this->platformRepository = $platformRepository;
+        $this->logger = $logger;
     }
 
+    /**
+     * @param DebitPlatformAccountRequest $request
+     * @return DebitPlatformAccountResponse
+     */
     public function execute(DebitPlatformAccountRequest $request)
     {
+        $this->logger->logRequest(self::class, $request);
+
         $errorCode = null;
 
         if (!$platform = $this->platformRepository->getByID($request->platformID))
             $errorCode = DebitPlatformAccountResponse::PLATFORM_NOT_FOUND_ERROR_CODE;
         else {
-            $amount = (new GetPlatformUsageAmountInteractor($this->platformRepository))->getDailyCost($platform->getID());
+            $amount = (new GetPlatformUsageAmountInteractor($this->platformRepository, $this->logger))->getDailyCost($platform->getID());
             $platform->setAccountBalance($platform->getAccountBalance() - $amount);
 
             if (!$this->platformRepository->persist($platform)) {
@@ -33,9 +43,17 @@ class DebitPlatformAccountInteractor
             }
         }
 
-        return ($errorCode === null) ? $this->createSuccessResponse() : $this->createErrorResponse($errorCode);
+        $response = ($errorCode === null) ? $this->createSuccessResponse() : $this->createErrorResponse($errorCode);
+
+        $this->logger->logResponse(self::class, $response);
+
+        return $response;
     }
 
+    /**
+     * @param $errorCode
+     * @return DebitPlatformAccountResponse
+     */
     private function createErrorResponse($errorCode)
     {
        return new DebitPlatformAccountResponse([
@@ -44,6 +62,9 @@ class DebitPlatformAccountInteractor
        ]);
     }
 
+    /**
+     * @return DebitPlatformAccountResponse
+     */
     private function createSuccessResponse()
     {
         return new DebitPlatformAccountResponse([

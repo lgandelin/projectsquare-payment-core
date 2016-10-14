@@ -10,7 +10,7 @@ class FundPlatformAccountInteractorTest extends ProjectsquareTestCase
     public function __construct()
     {
         parent::__construct();
-        $this->interactor = new FundPlatformAccountInteractor($this->platformRepository);
+        $this->interactor = new FundPlatformAccountInteractor($this->platformRepository, $this->getLoggerMock());
     }
 
     public function testFundPlatformAccount()

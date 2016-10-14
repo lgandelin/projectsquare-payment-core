@@ -11,7 +11,7 @@ class CreatePlatformInteractorTest extends ProjectsquareTestCase
     public function __construct()
     {
         parent::__construct();
-        $this->interactor = new CreatePlatformInteractor($this->platformRepository);
+        $this->interactor = new CreatePlatformInteractor($this->platformRepository, $this->getLoggerMock());
     }
 
     public function testCreatePlatform()

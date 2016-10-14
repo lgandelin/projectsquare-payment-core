@@ -11,7 +11,7 @@ class CreateAdministratorTest extends ProjectsquareTestCase
     public function __construct()
     {
         parent::__construct();
-        $this->interactor = new CreateAdministratorInteractor($this->administratorRepository);
+        $this->interactor = new CreateAdministratorInteractor($this->administratorRepository, $this->getLoggerMock());
     }
 
     public function testCreateAdministrator()

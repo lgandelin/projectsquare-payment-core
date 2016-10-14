@@ -2,6 +2,7 @@
 
 namespace Webaccess\ProjectSquarePayment\Interactors\Administrators;
 
+use Webaccess\ProjectSquarePayment\Contracts\Logger;
 use Webaccess\ProjectSquarePayment\Entities\Administrator;
 use Webaccess\ProjectSquarePayment\Repositories\AdministratorRepository;
 use Webaccess\ProjectSquarePayment\Requests\Administrators\CreateAdministratorRequest;
@@ -10,13 +11,16 @@ use Webaccess\ProjectSquarePayment\Responses\Administrators\CreateAdministratorR
 class CreateAdministratorInteractor
 {
     private $administratorRepository;
+    private $logger;
 
     /**
      * @param AdministratorRepository $administratorRepository
+     * @param Logger $logger
      */
-    public function __construct(AdministratorRepository $administratorRepository)
+    public function __construct(AdministratorRepository $administratorRepository, Logger $logger)
     {
         $this->administratorRepository = $administratorRepository;
+        $this->logger = $logger;
     }
 
     /**
@@ -25,6 +29,8 @@ class CreateAdministratorInteractor
      */
     public function execute(CreateAdministratorRequest $request)
     {
+        $this->logger->logRequest(self::class, $request);
+
         $errorCode = null;
         $administrator = $this->createObjectFromRequest($request);
 
@@ -46,7 +52,11 @@ class CreateAdministratorInteractor
         elseif (!$administratorID = $this->administratorRepository->persist($administrator))
             $errorCode = CreateAdministratorResponse::REPOSITORY_CREATION_FAILED;
 
-        return ($errorCode === null) ? $this->createSuccessResponse($administratorID) : $this->createErrorResponse($errorCode);
+        $response = ($errorCode === null) ? $this->createSuccessResponse($administratorID) : $this->createErrorResponse($errorCode);
+
+        $this->logger->logResponse(self::class, $response);
+
+        return $response;
     }
 
     /**

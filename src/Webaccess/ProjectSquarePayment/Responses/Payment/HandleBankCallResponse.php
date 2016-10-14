@@ -13,4 +13,5 @@ class HandleBankCallResponse extends Response
 
     public $success;
     public $errorCode;
+    public $transactionIdentifier;
 }

@@ -2,6 +2,7 @@
 
 namespace Webaccess\ProjectSquarePayment\Interactors\Payment;
 
+use Webaccess\ProjectSquarePayment\Contracts\Logger;
 use Webaccess\ProjectSquarePayment\Repositories\PlatformRepository;
 use Webaccess\ProjectSquarePayment\Requests\Payment\FundPlatformAccountRequest;
 use Webaccess\ProjectSquarePayment\Responses\Payment\FundPlatformAccountResponse;
@@ -12,14 +13,22 @@ class FundPlatformAccountInteractor
 
     /**
      * @param PlatformRepository $platformRepository
+     * @param Logger $logger
      */
-    public function __construct(PlatformRepository $platformRepository)
+    public function __construct(PlatformRepository $platformRepository, Logger $logger)
     {
         $this->platformRepository = $platformRepository;
+        $this->logger = $logger;
     }
 
+    /**
+     * @param FundPlatformAccountRequest $request
+     * @return FundPlatformAccountResponse
+     */
     public function execute(FundPlatformAccountRequest $request)
     {
+        $this->logger->logRequest(self::class, $request);
+
         $errorCode = null;
 
         if (!$platform = $this->platformRepository->getByID($request->platformID))
@@ -34,9 +43,17 @@ class FundPlatformAccountInteractor
             }
         }
 
-        return ($errorCode === null) ? $this->createSuccessResponse() : $this->createErrorResponse($errorCode);
+        $response = ($errorCode === null) ? $this->createSuccessResponse() : $this->createErrorResponse($errorCode);
+
+        $this->logger->logResponse(self::class, $response);
+
+        return $response;
     }
 
+    /**
+     * @param $errorCode
+     * @return FundPlatformAccountResponse
+     */
     private function createErrorResponse($errorCode)
     {
         return new FundPlatformAccountResponse([
@@ -45,6 +62,9 @@ class FundPlatformAccountInteractor
         ]);
     }
 
+    /**
+     * @return FundPlatformAccountResponse
+     */
     private function createSuccessResponse()
     {
         return new FundPlatformAccountResponse([
@@ -52,6 +72,10 @@ class FundPlatformAccountInteractor
         ]);
     }
 
+    /**
+     * @param $amount
+     * @return bool
+     */
     private function isAmountValid($amount)
     {
         return $amount > 0;

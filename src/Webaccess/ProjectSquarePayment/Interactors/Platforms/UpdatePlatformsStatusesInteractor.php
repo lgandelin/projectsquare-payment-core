@@ -3,23 +3,29 @@
 namespace Webaccess\ProjectSquarePayment\Interactors\Platforms;
 
 use DateTime;
+use Webaccess\ProjectSquarePayment\Contracts\Logger;
 use Webaccess\ProjectSquarePayment\Entities\Platform;
 use Webaccess\ProjectSquarePayment\Repositories\PlatformRepository;
 
 class UpdatePlatformsStatusesInteractor
 {
     private $platformRepository;
+    private $logger;
 
     /**
      * @param PlatformRepository $platformRepository
+     * @param Logger $logger
      */
-    public function __construct(PlatformRepository $platformRepository)
+    public function __construct(PlatformRepository $platformRepository, Logger $logger)
     {
         $this->platformRepository = $platformRepository;
+        $this->logger = $logger;
     }
 
     public function execute()
     {
+        $this->logger->logRequest(self::class);
+
         foreach ($this->platformRepository->getAll() as $platform) {
             if ($this->isPlatformInTrialPeriod($platform) && $this->isTrialPeriodFinished($platform)) {
                 $this->updateStatus($platform, Platform::PLATFORM_STATUS_IN_USE);
@@ -29,6 +35,8 @@ class UpdatePlatformsStatusesInteractor
                 $this->updateStatus($platform, Platform::PLATFORM_STATUS_DISABLED);
             }
         }
+
+        $this->logger->logResponse(self::class);
     }
 
     /**

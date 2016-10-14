@@ -2,6 +2,7 @@
 
 namespace Webaccess\ProjectSquarePayment\Interactors\Payment;
 
+use Webaccess\ProjectSquarePayment\Contracts\Logger;
 use Webaccess\ProjectSquarePayment\Entities\Transaction;
 use Webaccess\ProjectSquarePayment\Repositories\PlatformRepository;
 use Webaccess\ProjectSquarePayment\Repositories\TransactionRepository;
@@ -15,17 +16,20 @@ class HandleBankCallInteractor
     private $platformRepository;
     private $transactionRepository;
     private $bankService;
+    private $logger;
 
     /**
      * @param PlatformRepository $platformRepository
      * @param TransactionRepository $transactionRepository
      * @param BankService $bankService
+     * @param Logger $logger
      */
-    public function __construct(PlatformRepository $platformRepository, TransactionRepository $transactionRepository, BankService $bankService)
+    public function __construct(PlatformRepository $platformRepository, TransactionRepository $transactionRepository, BankService $bankService, Logger $logger)
     {
         $this->platformRepository = $platformRepository;
         $this->transactionRepository = $transactionRepository;
         $this->bankService = $bankService;
+        $this->logger = $logger;
     }
 
     /**
@@ -34,6 +38,8 @@ class HandleBankCallInteractor
      */
     public function execute(HandleBankCallRequest $request)
     {
+        $this->logger->logRequest(self::class, $request);
+
         $errorCode = null;
 
         list($parameters, $transactionIdentifier, $amount) = $this->extractParameters($request);
@@ -49,7 +55,7 @@ class HandleBankCallInteractor
         elseif (!$this->isTransactionAlreadyBeenProcessed($transaction)) {
             $this->updateTransactionStatus($transaction, Transaction::TRANSACTION_STATUS_VALIDATED);
 
-            $responseFundPlatform = (new FundPlatformAccountInteractor($this->platformRepository))->execute(new FundPlatformAccountRequest([
+            $responseFundPlatform = (new FundPlatformAccountInteractor($this->platformRepository, $this->logger))->execute(new FundPlatformAccountRequest([
                 'platformID' => $transaction->getPlatformID(),
                 'amount' => $amount,
             ]));
@@ -65,7 +71,11 @@ class HandleBankCallInteractor
                 $this->updateTransactionStatus($transaction, Transaction::TRANSACTION_STATUS_ERROR);
         }
 
-        return ($errorCode === null) ? $this->createSuccessResponse() : $this->createErrorResponse($errorCode);
+        $response = ($errorCode === null) ? $this->createSuccessResponse($transactionIdentifier) : $this->createErrorResponse($errorCode);
+
+        $this->logger->logResponse(self::class, $response);
+
+        return $response;
     }
 
     /**
@@ -128,12 +138,14 @@ class HandleBankCallInteractor
     }
 
     /**
+     * @param $transactionIdentifier
      * @return HandleBankCallResponse
      */
-    private function createSuccessResponse()
+    private function createSuccessResponse($transactionIdentifier)
     {
         return new HandleBankCallResponse([
             'success' => true,
+            'transactionIdentifier' => $transactionIdentifier
         ]);
     }
 

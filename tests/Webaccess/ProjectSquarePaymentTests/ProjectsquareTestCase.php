@@ -4,6 +4,7 @@ namespace Webaccess\ProjectSquarePaymentTests;
 
 use Mockery;
 use Webaccess\ProjectSquarePayment\Context;
+use Webaccess\ProjectSquarePayment\Contracts\Logger;
 use Webaccess\ProjectSquarePayment\Entities\Node;
 use Webaccess\ProjectSquarePayment\Entities\Transaction;
 use Webaccess\ProjectSquarePayment\Interactors\Platforms\CreatePlatformInteractor;
@@ -39,7 +40,7 @@ class ProjectsquareTestCase extends \PHPUnit_Framework_TestCase
 
     protected function createSamplePlatform($name = 'Webaccess', $slug = 'webaccess')
     {
-        $response = (new CreatePlatformInteractor($this->platformRepository))->execute(new CreatePlatformRequest([
+        $response = (new CreatePlatformInteractor($this->platformRepository, $this->getLoggerMock()))->execute(new CreatePlatformRequest([
             'name' => $name,
             'slug' => $slug,
             'usersCount' => 3,
@@ -73,5 +74,13 @@ class ProjectsquareTestCase extends \PHPUnit_Framework_TestCase
         $this->transactionRepository->persist($transaction);
 
         return $transaction;
+    }
+
+    protected function getLoggerMock()
+    {
+        return Mockery::mock(Logger::class)
+            ->shouldReceive('logRequest')
+            ->shouldReceive('logResponse')
+            ->mock();
     }
 }

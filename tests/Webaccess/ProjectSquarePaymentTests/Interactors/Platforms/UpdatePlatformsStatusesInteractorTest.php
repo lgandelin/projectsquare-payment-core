@@ -10,7 +10,7 @@ class UpdatePlatformsStatusesInteractorTest extends ProjectsquareTestCase
     public function __construct()
     {
         parent::__construct();
-        $this->interactor = new UpdatePlatformsStatusesInteractor($this->platformRepository);
+        $this->interactor = new UpdatePlatformsStatusesInteractor($this->platformRepository, $this->getLoggerMock());
     }
 
     public function testUpdatePlatformStatusAfterTrialPeriod()

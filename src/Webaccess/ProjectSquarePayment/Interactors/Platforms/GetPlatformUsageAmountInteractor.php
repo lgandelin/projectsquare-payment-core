@@ -3,6 +3,7 @@
 namespace Webaccess\ProjectSquarePayment\Interactors\Platforms;
 
 use Webaccess\ProjectSquarePayment\Context;
+use Webaccess\ProjectSquarePayment\Contracts\Logger;
 use Webaccess\ProjectSquarePayment\Repositories\PlatformRepository;
 
 class GetPlatformUsageAmountInteractor
@@ -11,10 +12,12 @@ class GetPlatformUsageAmountInteractor
 
     /**
      * @param PlatformRepository $platformRepository
+     * @param Logger $logger
      */
-    public function __construct(PlatformRepository $platformRepository)
+    public function __construct(PlatformRepository $platformRepository, Logger $logger)
     {
         $this->platformRepository = $platformRepository;
+        $this->logger = $logger;
     }
 
     /**
