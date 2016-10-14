@@ -5,6 +5,7 @@ namespace Webaccess\ProjectSquarePaymentTests;
 use Mockery;
 use Webaccess\ProjectSquarePayment\Context;
 use Webaccess\ProjectSquarePayment\Contracts\Logger;
+use Webaccess\ProjectSquarePayment\Entities\Administrator;
 use Webaccess\ProjectSquarePayment\Entities\Node;
 use Webaccess\ProjectSquarePayment\Entities\Transaction;
 use Webaccess\ProjectSquarePayment\Interactors\Platforms\CreatePlatformInteractor;
@@ -36,6 +37,21 @@ class ProjectsquareTestCase extends \PHPUnit_Framework_TestCase
     public function assertAmountEquals($expected, $actual)
     {
         $this->assertEquals($expected, $actual, '', 0.01);
+    }
+
+    protected function createSampleAdministrator($platformID)
+    {
+        $administrator = new Administrator();
+        $administrator->setLastName('Doe');
+        $administrator->setFirstName('John');
+        $administrator->setEmail('john.doe@gmail.com');
+        $administrator->setBillingAddress('Billing address');
+        $administrator->setCity('City');
+        $administrator->setZipcode('Zipcode');
+        $administrator->setPlatformID($platformID);
+        $this->administratorRepository->persist($administrator);
+
+        return $administrator;
     }
 
     protected function createSamplePlatform($name = 'Webaccess', $slug = 'webaccess')

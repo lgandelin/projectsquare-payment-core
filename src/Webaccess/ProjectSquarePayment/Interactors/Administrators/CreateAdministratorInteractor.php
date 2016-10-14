@@ -46,6 +46,15 @@ class CreateAdministratorInteractor
         elseif (!$administrator->getFirstName())
             $errorCode = CreateAdministratorResponse::ADMINISTRATOR_FIRST_NAME_REQUIRED;
 
+        elseif (!$administrator->getCity())
+            $errorCode = CreateAdministratorResponse::ADMINISTRATOR_CITY_REQUIRED;
+
+        elseif (!$administrator->getBillingAddress())
+            $errorCode = CreateAdministratorResponse::ADMINISTRATOR_BILLING_ADDRESS_REQUIRED;
+
+        elseif (!$administrator->getZipCode())
+            $errorCode = CreateAdministratorResponse::ADMINISTRATOR_ZIPCODE_REQUIRED;
+
         elseif (!$administrator->getPlatformID())
             $errorCode = CreateAdministratorResponse::PLATFORM_ID_REQUIRED;
 
