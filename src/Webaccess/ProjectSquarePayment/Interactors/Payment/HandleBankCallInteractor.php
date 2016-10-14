@@ -71,7 +71,7 @@ class HandleBankCallInteractor
                 $this->updateTransactionStatus($transaction, Transaction::TRANSACTION_STATUS_ERROR);
         }
 
-        $response = ($errorCode === null) ? $this->createSuccessResponse($transactionIdentifier) : $this->createErrorResponse($errorCode);
+        $response = ($errorCode === null) ? $this->createSuccessResponse($transactionIdentifier) : $this->createErrorResponse($errorCode, $transactionIdentifier);
 
         $this->logger->logResponse(self::class, $response);
 
@@ -151,13 +151,15 @@ class HandleBankCallInteractor
 
     /**
      * @param $errorCode
+     * @param $transactionIdentifier
      * @return HandleBankCallResponse
      */
-    private function createErrorResponse($errorCode)
+    private function createErrorResponse($errorCode, $transactionIdentifier)
     {
         return new HandleBankCallResponse([
             'success' => false,
-            'errorCode' => $errorCode
+            'errorCode' => $errorCode,
+            'transactionIdentifier' => $transactionIdentifier
         ]);
     }
 

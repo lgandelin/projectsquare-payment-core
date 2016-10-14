@@ -1,6 +1,6 @@
 <?php
 
-namespace Webaccess\ProjectSquarePayment\Repositories\InMemory;
+namespace Webaccess\ProjectSquarePaymentTests\Repositories\InMemory;
 
 use Webaccess\ProjectSquarePayment\Entities\Transaction;
 use Webaccess\ProjectSquarePayment\Repositories\TransactionRepository;

@@ -30,6 +30,7 @@ class InitTransactionInteractorTest extends ProjectsquareTestCase
         $this->assertEquals($platform->getID(), $transaction->getPlatformID());
         $this->assertEquals(56.00, $transaction->getAmount());
         $this->assertEquals(Transaction::TRANSACTION_STATUS_IN_PROGRESS, $transaction->getStatus());
+        $this->assertEquals(new DateTime(), $transaction->getCreationDate());
 
         $this->assertEquals('data', $response->data);
         $this->assertEquals('seal', $response->seal);

@@ -8,11 +8,11 @@ use Webaccess\ProjectSquarePayment\Contracts\Logger;
 use Webaccess\ProjectSquarePayment\Entities\Node;
 use Webaccess\ProjectSquarePayment\Entities\Transaction;
 use Webaccess\ProjectSquarePayment\Interactors\Platforms\CreatePlatformInteractor;
-use Webaccess\ProjectSquarePayment\Repositories\InMemory\InMemoryAdministratorRepository;
-use Webaccess\ProjectSquarePayment\Repositories\InMemory\InMemoryNodeRepository;
-use Webaccess\ProjectSquarePayment\Repositories\InMemory\InMemoryPlatformRepository;
-use Webaccess\ProjectSquarePayment\Repositories\InMemory\InMemoryTransactionRepository;
 use Webaccess\ProjectSquarePayment\Requests\Platforms\CreatePlatformRequest;
+use Webaccess\ProjectSquarePaymentTests\Repositories\InMemory\InMemoryAdministratorRepository;
+use Webaccess\ProjectSquarePaymentTests\Repositories\InMemory\InMemoryNodeRepository;
+use Webaccess\ProjectSquarePaymentTests\Repositories\InMemory\InMemoryPlatformRepository;
+use Webaccess\ProjectSquarePaymentTests\Repositories\InMemory\InMemoryTransactionRepository;
 
 class ProjectsquareTestCase extends \PHPUnit_Framework_TestCase
 {

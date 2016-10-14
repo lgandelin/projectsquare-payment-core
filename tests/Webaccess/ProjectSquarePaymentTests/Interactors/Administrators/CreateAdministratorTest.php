@@ -1,6 +1,5 @@
 <?php
 
-
 use Webaccess\ProjectSquarePayment\Interactors\Administrators\CreateAdministratorInteractor;
 use Webaccess\ProjectSquarePayment\Requests\Administrators\CreateAdministratorRequest;
 use Webaccess\ProjectSquarePayment\Responses\Administrators\CreateAdministratorResponse;

@@ -2,6 +2,7 @@
 
 namespace Webaccess\ProjectSquarePayment\Interactors\Payment;
 
+use DateTime;
 use Webaccess\ProjectSquarePayment\Contracts\BankService;
 use Webaccess\ProjectSquarePayment\Contracts\Logger;
 use Webaccess\ProjectSquarePayment\Entities\Transaction;
@@ -120,6 +121,7 @@ class InitTransactionInteractor
         $transaction->setPlatformID($request->platformID);
         $transaction->setAmount($request->amount);
         $transaction->setStatus(Transaction::TRANSACTION_STATUS_IN_PROGRESS);
+        $transaction->setCreationDate(new DateTime());
         $this->transactionRepository->persist($transaction);
 
         return $transactionIdentifier;
