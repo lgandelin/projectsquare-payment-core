@@ -7,6 +7,7 @@ class Transaction
     const TRANSACTION_STATUS_IN_PROGRESS = 1;
     const TRANSACTION_STATUS_VALIDATED = 2;
     const TRANSACTION_STATUS_ERROR = 3;
+    const TRANSACTION_STATUS_CANCELED = 4;
 
     private $id;
     private $identifier;

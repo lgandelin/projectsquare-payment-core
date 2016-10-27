@@ -41,6 +41,7 @@ class HandleBankCallInteractor
         $this->logger->logRequest(self::class, $request);
 
         $errorCode = null;
+        $transactionStatus = null;
 
         list($parameters, $transactionIdentifier, $amount) = $this->extractParameters($request);
 
@@ -53,26 +54,31 @@ class HandleBankCallInteractor
         elseif (!$this->checkSignature($request->data, $request->seal))
             $errorCode = HandleBankCallResponse::SIGNATURE_CHECK_FAILED_ERROR_CODE;
 
-        elseif (!$this->checkBankReponseCode($parameters))
-            $errorCode = HandleBankCallResponse::BANK_RESPONSE_CODE_INVALID_ERROR_CODE;
-
         elseif (!$this->isTransactionAlreadyBeenProcessed($transaction)) {
-            $this->updateTransactionStatus($transaction, Transaction::TRANSACTION_STATUS_VALIDATED);
 
-            $responseFundPlatform = (new FundPlatformAccountInteractor($this->platformRepository, $this->logger))->execute(new FundPlatformAccountRequest([
-                'platformID' => $transaction->getPlatformID(),
-                'amount' => $amount,
-            ]));
+            if ($this->isTransactionCancelled($parameters)) {
+                $transactionStatus = Transaction::TRANSACTION_STATUS_CANCELED;
+            } elseif ($this->isTransactionValid($parameters)) {
+                $transactionStatus = Transaction::TRANSACTION_STATUS_VALIDATED;
 
-            if (!$responseFundPlatform->success)
-                $errorCode = $responseFundPlatform->errorCode;
+                $responseFundPlatform = (new FundPlatformAccountInteractor($this->platformRepository, $this->logger))->execute(new FundPlatformAccountRequest([
+                    'platformID' => $transaction->getPlatformID(),
+                    'amount' => $amount,
+                ]));
+
+                if (!$responseFundPlatform->success)
+                    $errorCode = $responseFundPlatform->errorCode;
+            } else {
+                $errorCode = HandleBankCallResponse::BANK_RESPONSE_CODE_INVALID_ERROR_CODE;
+            }
         }
 
-        if ($transaction) {
-            $this->updateTransactionData($transaction, $parameters);
+        if ($errorCode != null)
+            $transactionStatus = Transaction::TRANSACTION_STATUS_ERROR;
 
-            if ($errorCode != null)
-                $this->updateTransactionStatus($transaction, Transaction::TRANSACTION_STATUS_ERROR);
+        if ($transaction && $transactionStatus) {
+            $this->updateTransactionData($transaction, $parameters);
+            $this->updateTransactionStatus($transaction, $transactionStatus);
         }
 
         $response = ($errorCode === null) ? $this->createSuccessResponse($transactionIdentifier) : $this->createErrorResponse($errorCode, $transactionIdentifier);
@@ -104,11 +110,11 @@ class HandleBankCallInteractor
 
     /**
      * @param $parameters
-     * @return bool
+     * @return string
      */
-    private function checkBankReponseCode($parameters)
+    private function extractBankResponseCode($parameters)
     {
-        return $parameters['responseCode'] == '00';
+        return $parameters['responseCode'];
     }
 
     /**
@@ -118,6 +124,37 @@ class HandleBankCallInteractor
     private function isTransactionAlreadyBeenProcessed(Transaction $transaction)
     {
         return $transaction->getStatus() !== Transaction::TRANSACTION_STATUS_IN_PROGRESS;
+    }
+
+    /**
+     * @param HandleBankCallRequest $request
+     * @return array
+     */
+    private function extractParameters(HandleBankCallRequest $request)
+    {
+        $parameters = $this->bankService->extractParametersFromData($request->data);
+        $transactionIdentifier = $parameters['transactionReference'];
+        $amount = floatval($parameters['amount']) / 100;
+
+        return array($parameters, $transactionIdentifier, $amount);
+    }
+
+    /**
+     * @param $parameters
+     * @return bool
+     */
+    private function isTransactionCancelled($parameters)
+    {
+        return $this->extractBankResponseCode($parameters) == "17";
+    }
+
+    /**
+     * @param $parameters
+     * @return bool
+     */
+    private function isTransactionValid($parameters)
+    {
+        return $this->extractBankResponseCode($parameters) == "00";
     }
 
     /**
@@ -136,7 +173,10 @@ class HandleBankCallInteractor
      */
     private function updateTransactionData(Transaction $transaction, $parameters)
     {
-        $transaction->setPaymentMean($parameters['paymentMeanType'] . ' - ' . $parameters['paymentMeanBrand']);
+        if (isset($parameters['paymentMeanType']) && isset($parameters['paymentMeanBrand'])) {
+            $transaction->setPaymentMean($parameters['paymentMeanType'] . ' - ' . $parameters['paymentMeanBrand']);
+        }
+
         $transaction->setResponseCode($parameters['responseCode']);
         $this->transactionRepository->persist($transaction);
     }
@@ -165,18 +205,5 @@ class HandleBankCallInteractor
             'errorCode' => $errorCode,
             'transactionIdentifier' => $transactionIdentifier
         ]);
-    }
-
-    /**
-     * @param HandleBankCallRequest $request
-     * @return array
-     */
-    private function extractParameters(HandleBankCallRequest $request)
-    {
-        $parameters = $this->bankService->extractParametersFromData($request->data);
-        $transactionIdentifier = $parameters['transactionReference'];
-        $amount = floatval($parameters['amount']) / 100;
-
-        return array($parameters, $transactionIdentifier, $amount);
     }
 }

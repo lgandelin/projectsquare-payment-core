@@ -215,4 +215,38 @@ class HandleBankCallInteractorTest extends ProjectsquareTestCase
         $transaction = $this->transactionRepository->getByIdentifier($transactionIdentifier);
         $this->assertEquals(Transaction::TRANSACTION_STATUS_ERROR, $transaction->getStatus());
     }
+
+    public function testHandleBankCallWithCancellation()
+    {
+        $transactionIdentifier = 'a5eb87x';
+        $amount = 50.00;
+        $bankServiceMock = Mockery::mock(BankService::class)
+            ->shouldReceive('checkSignature')->once()->andReturn(true)
+            ->shouldReceive('extractParametersFromData')->once()->andReturn([
+                'transactionReference' => $transactionIdentifier,
+                'amount' => $amount * 100,
+                'responseCode' => '17',
+            ])
+            ->mock();
+
+        $interactor = new HandleBankCallInteractor($this->platformRepository, $this->transactionRepository, $bankServiceMock, $this->getLoggerMock());
+
+        $platform = $this->createSamplePlatform();
+        $this->createSampleTransaction($transactionIdentifier, $amount, $platform->getID());
+
+        $response = $interactor->execute(new HandleBankCallRequest([
+            'data' => 'data',
+            'seal' => 'seal',
+        ]));
+
+        $platform = $this->platformRepository->getByID($platform->getID());
+
+        $this->assertInstanceOf(HandleBankCallResponse::class, $response);
+        $this->assertTrue($response->success);
+        $this->assertAmountEquals(60.00, $platform->getAccountBalance());
+
+        $transaction = $this->transactionRepository->getByIdentifier($transactionIdentifier);
+        $this->assertEquals(Transaction::TRANSACTION_STATUS_CANCELED, $transaction->getStatus());
+        $this->assertEquals('17', $transaction->getResponseCode());
+    }
 }
