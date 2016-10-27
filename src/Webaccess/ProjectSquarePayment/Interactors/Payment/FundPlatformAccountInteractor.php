@@ -33,8 +33,10 @@ class FundPlatformAccountInteractor
 
         if (!$platform = $this->platformRepository->getByID($request->platformID))
             $errorCode = FundPlatformAccountResponse::PLATFORM_NOT_FOUND_ERROR_CODE;
+
         elseif (!$this->isAmountValid($request->amount))
             $errorCode = FundPlatformAccountResponse::INVALID_AMOUNT_ERROR_CODE;
+        
         else {
             $platform->setAccountBalance($platform->getAccountBalance() + $request->amount);
 

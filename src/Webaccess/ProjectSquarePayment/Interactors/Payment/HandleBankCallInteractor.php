@@ -46,12 +46,16 @@ class HandleBankCallInteractor
 
         if (!$transaction = $this->transactionRepository->getByIdentifier($transactionIdentifier))
             $errorCode = HandleBankCallResponse::TRANSACTION_NOT_FOUND_ERROR_CODE;
+
         elseif (!$this->checkTransactionAmount($transaction, $amount))
             $errorCode = HandleBankCallResponse::INVALID_AMOUNT_ERROR_CODE;
+
         elseif (!$this->checkSignature($request->data, $request->seal))
             $errorCode = HandleBankCallResponse::SIGNATURE_CHECK_FAILED_ERROR_CODE;
+
         elseif (!$this->checkBankReponseCode($parameters))
             $errorCode = HandleBankCallResponse::BANK_RESPONSE_CODE_INVALID_ERROR_CODE;
+
         elseif (!$this->isTransactionAlreadyBeenProcessed($transaction)) {
             $this->updateTransactionStatus($transaction, Transaction::TRANSACTION_STATUS_VALIDATED);
 
