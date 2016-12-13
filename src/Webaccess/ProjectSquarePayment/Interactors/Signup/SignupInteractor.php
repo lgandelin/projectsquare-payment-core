@@ -79,7 +79,7 @@ class SignupInteractor
     private function createPlatform(SignupRequest $request)
     {
         return (new CreatePlatformInteractor($this->platformRepository, $this->logger))->execute(new CreatePlatformRequest([
-            'name' => $request->platformName,
+            //'name' => $request->platformName,
             'slug' => $request->platformSlug,
             'usersCount' => $request->platformUsersCount,
             'platformMonthlyCost' => $request->platformPlatformMonthlyCost,
@@ -97,11 +97,11 @@ class SignupInteractor
         return (new CreateAdministratorInteractor($this->administratorRepository, $this->logger))->execute(new CreateAdministratorRequest([
             'email' => $request->administratorEmail,
             'password' => $request->administratorPassword,
-            'lastName' => $request->administratorLastName,
-            'firstName' => $request->administratorFirstName,
-            'billingAddress' => $request->administratorBillingAddress,
-            'zipcode' => $request->administratorZipcode,
-            'city' => $request->administratorCity,
+            //'lastName' => $request->administratorLastName,
+            //'firstName' => $request->administratorFirstName,
+            //'billingAddress' => $request->administratorBillingAddress,
+            //'zipcode' => $request->administratorZipcode,
+            //'city' => $request->administratorCity,
             'platformID' => $platformID
         ]));
     }

@@ -40,7 +40,7 @@ class CreateAdministratorInteractor
         elseif (!$administrator->getPassword())
             $errorCode = CreateAdministratorResponse::ADMINISTRATOR_PASSWORD_REQUIRED;
 
-        elseif (!$administrator->getLastName())
+        /*elseif (!$administrator->getLastName())
             $errorCode = CreateAdministratorResponse::ADMINISTRATOR_LAST_NAME_REQUIRED;
 
         elseif (!$administrator->getFirstName())
@@ -53,7 +53,7 @@ class CreateAdministratorInteractor
             $errorCode = CreateAdministratorResponse::ADMINISTRATOR_BILLING_ADDRESS_REQUIRED;
 
         elseif (!$administrator->getZipCode())
-            $errorCode = CreateAdministratorResponse::ADMINISTRATOR_ZIPCODE_REQUIRED;
+            $errorCode = CreateAdministratorResponse::ADMINISTRATOR_ZIPCODE_REQUIRED;*/
 
         elseif (!$administrator->getPlatformID())
             $errorCode = CreateAdministratorResponse::PLATFORM_ID_REQUIRED;
@@ -77,11 +77,11 @@ class CreateAdministratorInteractor
         $administrator = new Administrator();
         $administrator->setEmail($request->email);
         $administrator->setPassword($request->password);
-        $administrator->setLastName($request->lastName);
+        /*$administrator->setLastName($request->lastName);
         $administrator->setFirstName($request->firstName);
         $administrator->setBillingAddress($request->billingAddress);
         $administrator->setZipcode($request->zipcode);
-        $administrator->setCity($request->city);
+        $administrator->setCity($request->city);*/
         $administrator->setPlatformID($request->platformID);
 
         return $administrator;

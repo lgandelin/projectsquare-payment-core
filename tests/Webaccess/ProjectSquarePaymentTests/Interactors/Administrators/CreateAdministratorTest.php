@@ -19,11 +19,11 @@ class CreateAdministratorTest extends ProjectsquareTestCase
         $response = $this->interactor->execute(new CreateAdministratorRequest([
             'email' => 'lgandelin@web-access.fr',
             'password' => '111aaa',
-            'lastName' => 'Gandelin',
-            'firstName' => 'Louis',
-            'billingAddress' => '17, rue du lac Saint André',
-            'zipcode' => '73370',
-            'city' => 'Le Bourget du Lac',
+            //'lastName' => 'Gandelin',
+            //'firstName' => 'Louis',
+            //'billingAddress' => '17, rue du lac Saint André',
+            //'zipcode' => '73370',
+            //'city' => 'Le Bourget du Lac',
             'platformID' => $platform->getId(),
         ]));
 
@@ -31,9 +31,9 @@ class CreateAdministratorTest extends ProjectsquareTestCase
         $this->assertEquals(1, sizeof($this->administratorRepository->objects));
         $administrator = $this->administratorRepository->getByID($response->administratorID);
         $this->assertEquals('lgandelin@web-access.fr', $administrator->getEmail());
-        $this->assertEquals('Gandelin', $administrator->getLastName());
-        $this->assertEquals('Louis', $administrator->getFirstName());
-        $this->assertEquals('73370', $administrator->getZipCode());
+        //$this->assertEquals('Gandelin', $administrator->getLastName());
+        //$this->assertEquals('Louis', $administrator->getFirstName());
+        //$this->assertEquals('73370', $administrator->getZipCode());
         $this->assertTrue($response->success);
     }
 
@@ -42,11 +42,11 @@ class CreateAdministratorTest extends ProjectsquareTestCase
         $platform = $this->createSamplePlatform();
         $response = $this->interactor->execute(new CreateAdministratorRequest([
             'password' => '111aaa',
-            'lastName' => 'Gandelin',
-            'firstName' => 'Louis',
-            'billingAddress' => '17, rue du lac Saint André',
-            'zipcode' => '73370',
-            'city' => 'Le Bourget du Lac',
+            //'lastName' => 'Gandelin',
+            //'firstName' => 'Louis',
+            //'billingAddress' => '17, rue du lac Saint André',
+            //'zipcode' => '73370',
+            //'city' => 'Le Bourget du Lac',
             'platformID' => $platform->getID(),
         ]));
 
@@ -56,16 +56,36 @@ class CreateAdministratorTest extends ProjectsquareTestCase
         $this->assertFalse($response->success);
     }
 
+    public function testCreateAdministratorWithoutPassword()
+    {
+        $platform = $this->createSamplePlatform();
+        $response = $this->interactor->execute(new CreateAdministratorRequest([
+            'email' => 'lgandelin@web-access.fr',
+            'password' => '',
+            //'lastName' => 'Gandelin',
+            //'firstName' => 'Louis',
+            //'billingAddress' => '17, rue du lac Saint André',
+            //'zipcode' => '73370',
+            //'city' => 'Le Bourget du Lac',
+            'platformID' => $platform->getID(),
+        ]));
+
+        $this->assertInstanceOf(CreateAdministratorResponse::class, $response);
+        $this->assertEquals(0, sizeof($this->administratorRepository->objects));
+        $this->assertEquals(CreateAdministratorResponse::ADMINISTRATOR_PASSWORD_REQUIRED, $response->errorCode);
+        $this->assertFalse($response->success);
+    }
+
     public function testCreateAdministratorWithoutPlatformID()
     {
         $response = $this->interactor->execute(new CreateAdministratorRequest([
             'email' => 'lgandelin@web-access.fr',
             'password' => '111aaa',
-            'lastName' => 'Gandelin',
-            'firstName' => 'Louis',
-            'billingAddress' => '17, rue du lac Saint André',
-            'zipcode' => '73370',
-            'city' => 'Le Bourget du Lac',
+            //'lastName' => 'Gandelin',
+            //'firstName' => 'Louis',
+            //'billingAddress' => '17, rue du lac Saint André',
+            //'zipcode' => '73370',
+            //'city' => 'Le Bourget du Lac',
         ]));
 
         $this->assertInstanceOf(CreateAdministratorResponse::class, $response);
