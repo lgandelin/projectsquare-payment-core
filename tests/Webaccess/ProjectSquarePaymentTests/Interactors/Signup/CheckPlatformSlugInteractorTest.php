@@ -10,7 +10,7 @@ class CheckPlatformSlugInteractorTest extends ProjectsquareTestCase
     public function __construct()
     {
         parent::__construct();
-        $this->interactor = new CheckPlatformSlugInteractor($this->platformRepository);
+        $this->interactor = new CheckPlatformSlugInteractor($this->platformRepository, $this->getLoggerMock());
     }
 
     public function testCheckValidPlatformSlug()

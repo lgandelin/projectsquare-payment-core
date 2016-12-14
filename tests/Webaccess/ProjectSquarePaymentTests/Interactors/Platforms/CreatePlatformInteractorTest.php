@@ -1,7 +1,6 @@
 <?php
 
 use Webaccess\ProjectSquarePayment\Interactors\Platforms\CreatePlatformInteractor;
-use Webaccess\ProjectSquarePayment\Interactors\Signup\CheckPlatformSlugInteractor;
 use Webaccess\ProjectSquarePayment\Requests\Platforms\CreatePlatformRequest;
 use Webaccess\ProjectSquarePayment\Responses\Platforms\CreatePlatformResponse;
 use Webaccess\ProjectSquarePayment\Responses\Signup\CheckPlatformSlugResponse;
@@ -12,7 +11,7 @@ class CreatePlatformInteractorTest extends ProjectsquareTestCase
     public function __construct()
     {
         parent::__construct();
-        $this->interactor = new CreatePlatformInteractor($this->platformRepository);
+        $this->interactor = new CreatePlatformInteractor($this->platformRepository, $this->getLoggerMock());
     }
 
     public function testCreatePlatform()
@@ -20,7 +19,9 @@ class CreatePlatformInteractorTest extends ProjectsquareTestCase
         $response = $this->interactor->execute(new CreatePlatformRequest([
             'name' => 'Webaccess',
             'slug' => 'webaccess',
-            'usersCount' => 3
+            'usersCount' => 3,
+            'platformMonthlyCost' => 20,
+            'userMonthlyCost' => 10,
         ]));
 
         $this->assertInstanceOf(CreatePlatformResponse::class, $response);
@@ -29,6 +30,8 @@ class CreatePlatformInteractorTest extends ProjectsquareTestCase
         $this->assertEquals('Webaccess', $platform->getName());
         $this->assertEquals('webaccess', $platform->getSlug());
         $this->assertEquals(3, $platform->getUsersCount());
+        $this->assertEquals(20, $platform->getPlatformMonthlyCost());
+        $this->assertEquals(10, $platform->getUserMonthlyCost());
         $this->assertEquals(new DateTime(), $platform->getCreationDate());
         $this->assertTrue($response->success);
     }
@@ -37,7 +40,9 @@ class CreatePlatformInteractorTest extends ProjectsquareTestCase
     {
         $response = $this->interactor->execute(new CreatePlatformRequest([
             'slug' => 'webaccess',
-            'usersCount' => 3
+            'usersCount' => 3,
+            'platformMonthlyCost' => 20,
+            'userMonthlyCost' => 10,
         ]));
 
         $this->assertInstanceOf(CreatePlatformResponse::class, $response);
@@ -53,7 +58,9 @@ class CreatePlatformInteractorTest extends ProjectsquareTestCase
         $response = $this->interactor->execute(new CreatePlatformRequest([
             'name' => 'Webaccess',
             'slug' => 'webaccess',
-            'usersCount' => 3
+            'usersCount' => 3,
+            'platformMonthlyCost' => 20,
+            'userMonthlyCost' => 10,
         ]));
 
         $this->assertInstanceOf(CreatePlatformResponse::class, $response);
@@ -67,6 +74,8 @@ class CreatePlatformInteractorTest extends ProjectsquareTestCase
         $response = $this->interactor->execute(new CreatePlatformRequest([
             'name' => 'Webaccess',
             'slug' => 'webaccess',
+            'platformMonthlyCost' => 20,
+            'userMonthlyCost' => 10,
         ]));
 
         $this->assertInstanceOf(CreatePlatformResponse::class, $response);
@@ -79,7 +88,9 @@ class CreatePlatformInteractorTest extends ProjectsquareTestCase
     {
         $response = $this->interactor->execute(new CreatePlatformRequest([
             'name' => 'Webaccess',
-            'usersCount' => 3
+            'usersCount' => 3,
+            'platformMonthlyCost' => 20,
+            'userMonthlyCost' => 10,
         ]));
 
         $this->assertInstanceOf(CreatePlatformResponse::class, $response);
@@ -93,7 +104,9 @@ class CreatePlatformInteractorTest extends ProjectsquareTestCase
         $response = $this->interactor->execute(new CreatePlatformRequest([
             'name' => 'Webaccess',
             'slug' => 'web.access',
-            'usersCount' => 3
+            'usersCount' => 3,
+            'platformMonthlyCost' => 20,
+            'userMonthlyCost' => 10,
         ]));
 
         $this->assertInstanceOf(CreatePlatformResponse::class, $response);

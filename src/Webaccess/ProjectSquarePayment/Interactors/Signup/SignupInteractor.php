@@ -2,28 +2,45 @@
 
 namespace Webaccess\ProjectSquarePayment\Interactors\Signup;
 
+use Webaccess\ProjectSquarePayment\Contracts\Logger;
+use Webaccess\ProjectSquarePayment\Contracts\RemoteInfrastructureService;
 use Webaccess\ProjectSquarePayment\Interactors\Administrators\CreateAdministratorInteractor;
+use Webaccess\ProjectSquarePayment\Interactors\Infrastructure\CreateInfrastructureInteractor;
 use Webaccess\ProjectSquarePayment\Interactors\Platforms\CreatePlatformInteractor;
 use Webaccess\ProjectSquarePayment\Repositories\AdministratorRepository;
+use Webaccess\ProjectSquarePayment\Repositories\NodeRepository;
 use Webaccess\ProjectSquarePayment\Repositories\PlatformRepository;
 use Webaccess\ProjectSquarePayment\Requests\Administrators\CreateAdministratorRequest;
+use Webaccess\ProjectSquarePayment\Requests\Infrastructure\CreateInfrastructureRequest;
 use Webaccess\ProjectSquarePayment\Requests\Platforms\CreatePlatformRequest;
 use Webaccess\ProjectSquarePayment\Requests\Signup\SignupRequest;
+use Webaccess\ProjectSquarePayment\Responses\Administrators\CreateAdministratorResponse;
+use Webaccess\ProjectSquarePayment\Responses\Infrastructure\CreateInfrastructureResponse;
+use Webaccess\ProjectSquarePayment\Responses\Platforms\CreatePlatformResponse;
 use Webaccess\ProjectSquarePayment\Responses\Signup\SignupResponse;
 
 class SignupInteractor
 {
     private $platformRepository;
     private $administratorRepository;
+    private $nodeRepository;
+    private $remoteInfrastructureService;
+    private $logger;
 
     /**
      * @param PlatformRepository $platformRepository
      * @param AdministratorRepository $administratorRepository
+     * @param NodeRepository $nodeRepository
+     * @param RemoteInfrastructureService $remoteInfrastructureService
+     * @param Logger $logger
      */
-    public function __construct(PlatformRepository $platformRepository, AdministratorRepository $administratorRepository)
+    public function __construct(PlatformRepository $platformRepository, AdministratorRepository $administratorRepository, NodeRepository $nodeRepository, RemoteInfrastructureService $remoteInfrastructureService, Logger $logger)
     {
         $this->platformRepository = $platformRepository;
+        $this->nodeRepository = $nodeRepository;
         $this->administratorRepository = $administratorRepository;
+        $this->remoteInfrastructureService = $remoteInfrastructureService;
+        $this->logger = $logger;
     }
 
     /**
@@ -32,6 +49,8 @@ class SignupInteractor
      */
     public function execute(SignupRequest $request)
     {
+        $this->logger->logRequest(self::class, $request);
+
         $responsePlatform = $this->createPlatform($request);
 
         if (!$responsePlatform->success)
@@ -44,31 +63,38 @@ class SignupInteractor
             return $this->createErrorResponse($responseAdministrator->errorCode);
         }
 
-        return $this->createSuccessResponse($responsePlatform->platformID, $responseAdministrator->administratorID);
+        $this->createInfrastructure($request, $responsePlatform->platformID);
+
+        $response = $this->createSuccessResponse($responsePlatform->platformID, $responseAdministrator->administratorID);
+
+        $this->logger->logResponse(self::class, $response);
+
+        return $response;
     }
 
     /**
      * @param SignupRequest $request
-     * @return \Webaccess\ProjectSquarePayment\Responses\Platforms\CreatePlatformResponse
+     * @return CreatePlatformResponse
      */
     private function createPlatform(SignupRequest $request)
     {
-        $responsePlatform = (new CreatePlatformInteractor($this->platformRepository))->execute(new CreatePlatformRequest([
+        return (new CreatePlatformInteractor($this->platformRepository, $this->logger))->execute(new CreatePlatformRequest([
             'name' => $request->platformName,
             'slug' => $request->platformSlug,
             'usersCount' => $request->platformUsersCount,
+            'platformMonthlyCost' => $request->platformPlatformMonthlyCost,
+            'userMonthlyCost' => $request->platformUserMonthlyCost,
         ]));
-        return $responsePlatform;
     }
 
     /**
      * @param SignupRequest $request
      * @param $platformID
-     * @return \Webaccess\ProjectSquarePayment\Responses\Administrators\CreateAdministratorResponse
+     * @return CreateAdministratorResponse
      */
     private function createAdministrator(SignupRequest $request, $platformID)
     {
-        $responseAdministrator = (new CreateAdministratorInteractor($this->administratorRepository))->execute(new CreateAdministratorRequest([
+        return (new CreateAdministratorInteractor($this->administratorRepository, $this->logger))->execute(new CreateAdministratorRequest([
             'email' => $request->administratorEmail,
             'password' => $request->administratorPassword,
             'lastName' => $request->administratorLastName,
@@ -78,8 +104,21 @@ class SignupInteractor
             'city' => $request->administratorCity,
             'platformID' => $platformID
         ]));
+    }
 
-        return $responseAdministrator;
+    /**
+     * @param SignupRequest $request
+     * @param $platformID
+     * @return CreateInfrastructureResponse
+     */
+    private function createInfrastructure(SignupRequest $request, $platformID)
+    {
+        return (new CreateInfrastructureInteractor($this->nodeRepository, $this->platformRepository, $this->remoteInfrastructureService, $this->logger))->execute(new CreateInfrastructureRequest([
+            'platformID' => $platformID,
+            'slug' => $request->platformSlug,
+            'administratorEmail' => $request->administratorEmail,
+            'usersLimit' => $request->platformUsersCount,
+        ]));
     }
 
     /**

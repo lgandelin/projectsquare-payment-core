@@ -4,11 +4,16 @@ namespace Webaccess\ProjectSquarePayment\Entities;
 
 class Platform
 {
+    const PLATFORM_STATUS_DISABLED = 0;
+    const PLATFORM_STATUS_TRIAL_PERIOD = 1;
+    const PLATFORM_STATUS_IN_USE = 2;
+
     private $id;
     private $name;
     private $slug;
     private $usersCount;
-    private $fixedMonthlyCost;
+    private $status;
+    private $platformMonthlyCost;
     private $userMonthlyCost;
     private $accountBalance;
     private $creationDate;
@@ -53,14 +58,24 @@ class Platform
         $this->usersCount = $usersCount;
     }
 
-    public function getFixedMonthlyCost()
+    public function getStatus()
     {
-        return $this->fixedMonthlyCost;
+        return $this->status;
     }
 
-    public function setFixedMonthlyCost($fixedMonthlyCost)
+    public function setStatus($status)
     {
-        $this->fixedMonthlyCost = $fixedMonthlyCost;
+        $this->status = $status;
+    }
+
+    public function getPlatformMonthlyCost()
+    {
+        return $this->platformMonthlyCost;
+    }
+
+    public function setPlatformMonthlyCost($platformMonthlyCost)
+    {
+        $this->platformMonthlyCost = $platformMonthlyCost;
     }
 
     public function getUserMonthlyCost()

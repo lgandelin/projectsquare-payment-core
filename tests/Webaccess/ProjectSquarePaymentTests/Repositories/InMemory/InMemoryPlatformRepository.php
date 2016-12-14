@@ -1,6 +1,6 @@
 <?php
 
-namespace Webaccess\ProjectSquarePayment\Repositories\InMemory;
+namespace Webaccess\ProjectSquarePaymentTests\Repositories\InMemory;
 
 use Webaccess\ProjectSquarePayment\Entities\Platform;
 use Webaccess\ProjectSquarePayment\Repositories\PlatformRepository;
@@ -35,6 +35,11 @@ class InMemoryPlatformRepository implements PlatformRepository
         return false;
     }
 
+    public function getAll()
+    {
+        return $this->objects;
+    }
+
     public function persist(Platform $platform)
     {
         if (!$platform->getID()) {
@@ -42,7 +47,7 @@ class InMemoryPlatformRepository implements PlatformRepository
         }
         $this->objects[$platform->getID()] = $platform;
 
-        return true;
+        return $platform->getID();
     }
 
     public function deleteByID($platformID)
@@ -50,5 +55,10 @@ class InMemoryPlatformRepository implements PlatformRepository
         if (isset($this->objects[$platformID])) {
             unset($this->objects[$platformID]);
         }
+    }
+
+    public function updatePlatformNodeIdentifier($platformID, $nodeIdentifier)
+    {
+
     }
 }

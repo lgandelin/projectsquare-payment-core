@@ -3,6 +3,7 @@
 namespace Webaccess\ProjectSquarePayment\Interactors\Platforms;
 
 use DateTime;
+use Webaccess\ProjectSquarePayment\Contracts\Logger;
 use Webaccess\ProjectSquarePayment\Entities\Platform;
 use Webaccess\ProjectSquarePayment\Interactors\Signup\CheckPlatformSlugInteractor;
 use Webaccess\ProjectSquarePayment\Repositories\PlatformRepository;
@@ -14,13 +15,16 @@ use Webaccess\ProjectSquarePayment\Responses\Signup\CheckPlatformSlugResponse;
 class CreatePlatformInteractor
 {
     private $platformRepository;
+    private $logger;
 
     /**
      * @param PlatformRepository $platformRepository
+     * @param Logger $logger
      */
-    public function __construct(PlatformRepository $platformRepository)
+    public function __construct(PlatformRepository $platformRepository, Logger $logger)
     {
         $this->platformRepository = $platformRepository;
+        $this->logger = $logger;
     }
 
     /**
@@ -29,6 +33,8 @@ class CreatePlatformInteractor
      */
     public function execute(CreatePlatformRequest $request)
     {
+        $this->logger->logRequest(self::class, $request);
+
         $errorCode = null;
         $platform = $this->createObjectFromRequest($request);
         $responseSlug = $this->verifyPlatformSlug($request);
@@ -48,7 +54,11 @@ class CreatePlatformInteractor
         elseif (!$platformID = $this->platformRepository->persist($platform))
             $errorCode = CreatePlatformResponse::REPOSITORY_CREATION_FAILED;
 
-        return ($errorCode === null) ? $this->createSuccessResponse($platformID) : $this->createErrorResponse($errorCode);
+        $response = ($errorCode === null) ? $this->createSuccessResponse($platformID) : $this->createErrorResponse($errorCode);
+
+        $this->logger->logResponse(self::class, $response);
+
+        return $response;
     }
 
     /**
@@ -61,6 +71,9 @@ class CreatePlatformInteractor
         $platform->setName($request->name);
         $platform->setSlug($request->slug);
         $platform->setUsersCount($request->usersCount);
+        $platform->setStatus(Platform::PLATFORM_STATUS_TRIAL_PERIOD);
+        $platform->setPlatformMonthlyCost($request->platformMonthlyCost);
+        $platform->setUserMonthlyCost($request->userMonthlyCost);
         $platform->setCreationDate(new DateTime());
 
         return $platform;
@@ -72,7 +85,7 @@ class CreatePlatformInteractor
      */
     private function verifyPlatformSlug(CreatePlatformRequest $request)
     {
-        return (new CheckPlatformSlugInteractor($this->platformRepository))->execute(new CheckPlatformSlugRequest([
+        return (new CheckPlatformSlugInteractor($this->platformRepository, $this->logger))->execute(new CheckPlatformSlugRequest([
             'slug' => $request->slug,
         ]));
     }

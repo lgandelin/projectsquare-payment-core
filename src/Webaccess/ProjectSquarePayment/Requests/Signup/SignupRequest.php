@@ -9,6 +9,8 @@ class SignupRequest extends Request
     public $platformName;
     public $platformSlug;
     public $platformUsersCount;
+    public $platformPlatformMonthlyCost;
+    public $platformUserMonthlyCost;
     public $administratorEmail;
     public $administratorPassword;
     public $administratorLastName;
