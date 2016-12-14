@@ -8,7 +8,7 @@ class GetPlatformUsageAmountInteractorTest extends ProjectsquareTestCase
     public function __construct()
     {
         parent::__construct();
-        $this->interactor = new GetPlatformUsageAmountInteractor($this->platformRepository);
+        $this->interactor = new GetPlatformUsageAmountInteractor($this->platformRepository, $this->getLoggerMock());
     }
 
     public function testGetMonthlyCost()

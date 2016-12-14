@@ -12,6 +12,9 @@ class CreateAdministratorResponse extends Response
     const ADMINISTRATOR_EMAIL_REQUIRED = -10;
     const ADMINISTRATOR_PASSWORD_REQUIRED = -11;
     const PLATFORM_ID_REQUIRED = -12;
+    const ADMINISTRATOR_CITY_REQUIRED = -13;
+    const ADMINISTRATOR_BILLING_ADDRESS_REQUIRED = -14;
+    const ADMINISTRATOR_ZIPCODE_REQUIRED = -15;
 
     public $success;
     public $errorCode;

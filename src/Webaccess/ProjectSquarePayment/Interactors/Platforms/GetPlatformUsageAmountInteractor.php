@@ -2,6 +2,8 @@
 
 namespace Webaccess\ProjectSquarePayment\Interactors\Platforms;
 
+use Webaccess\ProjectSquarePayment\Context;
+use Webaccess\ProjectSquarePayment\Contracts\Logger;
 use Webaccess\ProjectSquarePayment\Repositories\PlatformRepository;
 
 class GetPlatformUsageAmountInteractor
@@ -10,10 +12,12 @@ class GetPlatformUsageAmountInteractor
 
     /**
      * @param PlatformRepository $platformRepository
+     * @param Logger $logger
      */
-    public function __construct(PlatformRepository $platformRepository)
+    public function __construct(PlatformRepository $platformRepository, Logger $logger)
     {
         $this->platformRepository = $platformRepository;
+        $this->logger = $logger;
     }
 
     /**
@@ -23,8 +27,7 @@ class GetPlatformUsageAmountInteractor
     public function getMonthlyCost($platformID)
     {
         $platform = $this->platformRepository->getByID($platformID);
-
-        return $platform->getFixedMonthlyCost() + $platform->getUsersCount() * $platform->getUserMonthlyCost();
+        return $platform->getPlatformMonthlyCost() + $platform->getUsersCount() * $platform->getUserMonthlyCost();
     }
 
     /**
@@ -33,6 +36,11 @@ class GetPlatformUsageAmountInteractor
      */
     public function getDailyCost($platformID)
     {
-        return $this->getMonthlyCost($platformID) / date('t');
+        return $this->getMonthlyCost($platformID) / $this->getNumberOfDaysOfMonth();
+    }
+
+    private function getNumberOfDaysOfMonth()
+    {
+        return date('t', mktime(0, 0, 0, Context::getMonth(), 1, Context::getYear()));
     }
 }

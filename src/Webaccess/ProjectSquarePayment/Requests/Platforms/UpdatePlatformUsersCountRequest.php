@@ -4,8 +4,8 @@ namespace Webaccess\ProjectSquarePayment\Requests\Platforms;
 
 use Webaccess\ProjectSquarePayment\Requests\Request;
 
-class FundPlatformAccountRequest extends Request
+class UpdatePlatformUsersCountRequest extends Request
 {
     public $platformID;
-    public $amount;
+    public $usersCount;
 }
