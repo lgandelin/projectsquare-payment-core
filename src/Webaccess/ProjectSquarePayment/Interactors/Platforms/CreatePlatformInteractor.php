@@ -39,10 +39,10 @@ class CreatePlatformInteractor
         $platform = $this->createObjectFromRequest($request);
         $responseSlug = $this->verifyPlatformSlug($request);
 
-        if (!$platform->getName())
-            $errorCode = CreatePlatformResponse::PLATFORM_NAME_REQUIRED;
+        /*if (!$platform->getName())
+            $errorCode = CreatePlatformResponse::PLATFORM_NAME_REQUIRED;*/
 
-        elseif (!$platform->getSlug())
+        if (!$platform->getSlug())
             $errorCode = CreatePlatformResponse::PLATFORM_SLUG_REQUIRED;
 
         elseif (!$responseSlug->success)

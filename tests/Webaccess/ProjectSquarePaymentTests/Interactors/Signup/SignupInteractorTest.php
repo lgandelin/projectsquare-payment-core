@@ -24,25 +24,25 @@ class SignupInteractorTest extends ProjectsquareTestCase
         $interactor = new SignupInteractor($this->platformRepository, $this->administratorRepository, $this->nodeRepository, $remoteInfrastructureServiceMock, $this->getLoggerMock());
 
         $response = $interactor->execute(new SignupRequest([
-            'platformName' => 'Webaccess',
+            //'platformName' => 'Webaccess',
             'platformSlug' => 'webaccess',
             'platformUsersCount' => 3,
             'platformPlatformMonthlyCost' => 20,
             'platformUserMonthlyCost' => 10,
             'administratorEmail' => 'lgandelin@web-access.fr',
             'administratorPassword' => '111aaa',
-            'administratorLastName' => 'Gandelin',
+            /*'administratorLastName' => 'Gandelin',
             'administratorFirstName' => 'Louis',
             'administratorBillingAddress' => '17, rue du lac Saint André',
             'administratorZipcode' => '73370',
-            'administratorCity' => 'Le Bourget du Lac',
+            'administratorCity' => 'Le Bourget du Lac',*/
         ]));
 
         $this->assertInstanceOf(SignupResponse::class, $response);
         $this->assertEquals(1, sizeof($this->platformRepository->objects));
         $this->assertEquals(1, sizeof($this->administratorRepository->objects));
         $platform = $this->platformRepository->getByID($response->platformID);
-        $this->assertEquals('Webaccess', $platform->getName());
+        //$this->assertEquals('Webaccess', $platform->getName());
         $this->assertEquals('webaccess', $platform->getSlug());
         $this->assertEquals(3, $platform->getUsersCount());
         $this->assertEquals(Platform::PLATFORM_STATUS_TRIAL_PERIOD, $platform->getStatus());
@@ -51,11 +51,11 @@ class SignupInteractorTest extends ProjectsquareTestCase
         $this->assertEquals(new DateTime(), $platform->getCreationDate());
         $administrator = $this->administratorRepository->getByID($response->administratorID);
         $this->assertEquals('lgandelin@web-access.fr', $administrator->getEmail());
-        $this->assertEquals('Gandelin', $administrator->getLastName());
+        /*$this->assertEquals('Gandelin', $administrator->getLastName());
         $this->assertEquals('Louis', $administrator->getFirstName());
         $this->assertEquals('17, rue du lac Saint André', $administrator->getBillingAddress());
         $this->assertEquals('73370', $administrator->getZipCode());
-        $this->assertEquals('Le Bourget du Lac', $administrator->getCity());
+        $this->assertEquals('Le Bourget du Lac', $administrator->getCity());*/
         $this->assertTrue($response->success);
     }
 
@@ -70,15 +70,15 @@ class SignupInteractorTest extends ProjectsquareTestCase
         $interactor = new SignupInteractor($this->platformRepository, $this->administratorRepository, $this->nodeRepository, $remoteInfrastructureGeneratorMock, $this->getLoggerMock());
 
         $response = $interactor->execute(new SignupRequest([
-            'platformName' => 'Webaccess',
+            //'platformName' => 'Webaccess',
             'platformUsersCount' => 3,
             'administratorEmail' => 'lgandelin@web-access.fr',
             'administratorPassword' => '111aaa',
-            'administratorLastName' => 'Gandelin',
+            /*'administratorLastName' => 'Gandelin',
             'administratorFirstName' => 'Louis',
             'administratorBillingAddress' => '17, rue du lac Saint André',
             'administratorZipcode' => '73370',
-            'administratorCity' => 'Le Bourget du Lac',
+            'administratorCity' => 'Le Bourget du Lac',*/
         ]));
 
         $this->assertInstanceOf(SignupResponse::class, $response);
@@ -99,16 +99,16 @@ class SignupInteractorTest extends ProjectsquareTestCase
         $interactor = new SignupInteractor($this->platformRepository, $this->administratorRepository, $this->nodeRepository, $remoteInfrastructureGeneratorMock, $this->getLoggerMock());
 
         $response = $interactor->execute(new SignupRequest([
-            'platformName' => 'Webaccess',
+            //'platformName' => 'Webaccess',
             'platformSlug' => 'web@ccess',
             'platformUsersCount' => 3,
             'administratorEmail' => 'lgandelin@web-access.fr',
             'administratorPassword' => '111aaa',
-            'administratorLastName' => 'Gandelin',
+            /*'administratorLastName' => 'Gandelin',
             'administratorFirstName' => 'Louis',
             'administratorBillingAddress' => '17, rue du lac Saint André',
             'administratorZipcode' => '73370',
-            'administratorCity' => 'Le Bourget du Lac',
+            'administratorCity' => 'Le Bourget du Lac',*/
         ]));
 
         $this->assertInstanceOf(SignupResponse::class, $response);
@@ -129,15 +129,15 @@ class SignupInteractorTest extends ProjectsquareTestCase
         $interactor = new SignupInteractor($this->platformRepository, $this->administratorRepository, $this->nodeRepository, $remoteInfrastructureGeneratorMock, $this->getLoggerMock());
 
         $response = $interactor->execute(new SignupRequest([
-            'platformName' => 'Webaccess',
+            //'platformName' => 'Webaccess',
             'platformSlug' => 'webaccess',
             'platformUsersCount' => 3,
             'administratorPassword' => '111aaa',
-            'administratorLastName' => 'Gandelin',
+            /*'administratorLastName' => 'Gandelin',
             'administratorFirstName' => 'Louis',
             'administratorBillingAddress' => '17, rue du lac Saint André',
             'administratorZipcode' => '73370',
-            'administratorCity' => 'Le Bourget du Lac',
+            'administratorCity' => 'Le Bourget du Lac',*/
         ]));
 
         $this->assertInstanceOf(SignupResponse::class, $response);
