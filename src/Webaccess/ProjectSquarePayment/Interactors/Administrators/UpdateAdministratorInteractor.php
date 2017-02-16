@@ -75,7 +75,7 @@ class UpdateAdministratorInteractor
         if ($request->firstName !== null && $request->firstName !== $administrator->getFirstName()) $administrator->setFirstName($request->firstName);
         if ($request->lastName !== null && $request->lastName !== $administrator->getLastName()) $administrator->setLastName($request->lastName);
         if ($request->billingAddress !== null && $request->billingAddress !== $administrator->getBillingAddress()) $administrator->setBillingAddress($request->billingAddress);
-        if ($request->city !== null && $request->city !== $administrator->getCity()) $administrator->setBillingAddress($request->city);
+        if ($request->city !== null && $request->city !== $administrator->getCity()) $administrator->setCity($request->city);
         if ($request->zipcode !== null && $request->zipcode !== $administrator->getZipCode()) $administrator->setZipcode($request->zipcode);
 
         return $this->administratorRepository->persist($administrator);
