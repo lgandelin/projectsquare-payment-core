@@ -13,7 +13,6 @@ use Webaccess\ProjectSquarePayment\Requests\Platforms\CreatePlatformRequest;
 use Webaccess\ProjectSquarePaymentTests\Repositories\InMemory\InMemoryAdministratorRepository;
 use Webaccess\ProjectSquarePaymentTests\Repositories\InMemory\InMemoryNodeRepository;
 use Webaccess\ProjectSquarePaymentTests\Repositories\InMemory\InMemoryPlatformRepository;
-use Webaccess\ProjectSquarePaymentTests\Repositories\InMemory\InMemoryTransactionRepository;
 
 class ProjectsquareTestCase extends \PHPUnit_Framework_TestCase
 {
@@ -23,7 +22,6 @@ class ProjectsquareTestCase extends \PHPUnit_Framework_TestCase
         $this->platformRepository = new InMemoryPlatformRepository();
         $this->administratorRepository = new InMemoryAdministratorRepository();
         $this->nodeRepository = new InMemoryNodeRepository();
-        $this->transactionRepository = new InMemoryTransactionRepository;
 
         Context::setMonth(9);
         Context::setYear(2016);
@@ -87,7 +85,6 @@ class ProjectsquareTestCase extends \PHPUnit_Framework_TestCase
         $transaction->setStatus(Transaction::TRANSACTION_STATUS_IN_PROGRESS);
         $transaction->setAmount($amount);
         $transaction->setPlatformID($platformID);
-        $this->transactionRepository->persist($transaction);
 
         return $transaction;
     }

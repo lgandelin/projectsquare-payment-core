@@ -32,7 +32,6 @@ class CreatePlatformInteractorTest extends ProjectsquareTestCase
         $this->assertEquals(3, $platform->getUsersCount());
         $this->assertEquals(20, $platform->getPlatformMonthlyCost());
         $this->assertEquals(10, $platform->getUserMonthlyCost());
-        $this->assertEquals(new DateTime(), $platform->getCreationDate());
         $this->assertTrue($response->success);
     }
 

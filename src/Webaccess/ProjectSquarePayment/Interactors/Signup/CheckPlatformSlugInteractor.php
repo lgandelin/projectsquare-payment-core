@@ -28,7 +28,7 @@ class CheckPlatformSlugInteractor
      */
     public function execute(CheckPlatformSlugRequest $request)
     {
-        $this->logger->logRequest(self::class, $request);
+        //$this->logger->logRequest(self::class, $request);
 
         $errorCode = null;
 
@@ -40,7 +40,7 @@ class CheckPlatformSlugInteractor
 
         $response = ($errorCode === null) ? $this->createSuccessResponse() : $this->createErrorResponse($errorCode);
 
-        $this->logger->logResponse(self::class, $response);
+        //$this->logger->logResponse(self::class, $response);
 
         return $response;
     }

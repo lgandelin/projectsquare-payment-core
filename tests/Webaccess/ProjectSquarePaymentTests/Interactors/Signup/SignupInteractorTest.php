@@ -48,7 +48,6 @@ class SignupInteractorTest extends ProjectsquareTestCase
         $this->assertEquals(Platform::PLATFORM_STATUS_TRIAL_PERIOD, $platform->getStatus());
         $this->assertEquals(20, $platform->getPlatformMonthlyCost());
         $this->assertEquals(10, $platform->getUserMonthlyCost());
-        $this->assertEquals(new DateTime(), $platform->getCreationDate());
         $administrator = $this->administratorRepository->getByID($response->administratorID);
         $this->assertEquals('lgandelin@web-access.fr', $administrator->getEmail());
         /*$this->assertEquals('Gandelin', $administrator->getLastName());
