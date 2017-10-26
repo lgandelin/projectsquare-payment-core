@@ -62,7 +62,6 @@ class ProjectsquareTestCase extends \PHPUnit_Framework_TestCase
             'userMonthlyCost' => 9.99,
         ]));
         $platform = $this->platformRepository->getByID($response->platformID);
-        $platform->setAccountBalance(60);
         $this->platformRepository->persist($platform);
 
         return $platform;
